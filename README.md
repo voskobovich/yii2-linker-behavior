@@ -2,15 +2,15 @@ Yii2 ManyToMany Behavior
 ========================
 This behavior makes it easy to maintain many-to-many and one-to-many relations in your ActiveRecord models.
 
-[![License](https://poser.pugx.org/voskobovich/yii2-many-many-behavior/license.svg)](https://packagist.org/packages/voskobovich/yii2-many-many-behavior)
-[![Latest Stable Version](https://poser.pugx.org/voskobovich/yii2-many-many-behavior/v/stable.svg)](https://packagist.org/packages/voskobovich/yii2-many-many-behavior)
-[![Latest Unstable Version](https://poser.pugx.org/voskobovich/yii2-many-many-behavior/v/unstable.svg)](https://packagist.org/packages/voskobovich/yii2-many-many-behavior)
-[![Total Downloads](https://poser.pugx.org/voskobovich/yii2-many-many-behavior/downloads.svg)](https://packagist.org/packages/voskobovich/yii2-many-many-behavior)
-[![Build Status](https://travis-ci.org/voskobovich/yii2-many-to-many-behavior.svg?branch=master)](https://travis-ci.org/voskobovich/yii2-many-many-behavior)
+[![License](https://poser.pugx.org/voskobovich/yii2-linker-behavior/license.svg)](https://packagist.org/packages/voskobovich/yii2-linker-behavior)
+[![Latest Stable Version](https://poser.pugx.org/voskobovich/yii2-linker-behavior/v/stable.svg)](https://packagist.org/packages/voskobovich/yii2-linker-behavior)
+[![Latest Unstable Version](https://poser.pugx.org/voskobovich/yii2-linker-behavior/v/unstable.svg)](https://packagist.org/packages/voskobovich/yii2-linker-behavior)
+[![Total Downloads](https://poser.pugx.org/voskobovich/yii2-linker-behavior/downloads.svg)](https://packagist.org/packages/voskobovich/yii2-linker-behavior)
+[![Build Status](https://travis-ci.org/voskobovich/yii2-linker-behavior.svg?branch=master)](https://travis-ci.org/voskobovich/yii2-linker-behavior)
 
 Support
 ---
-[GutHub issues](https://github.com/voskobovich/yii2-many-to-many-behavior/issues).
+[GutHub issues](https://github.com/voskobovich/yii2-linker-behavior/issues).
 
 Usage
 -----
@@ -40,7 +40,7 @@ public function behaviors()
 {
     return [
         [
-            'class' => \voskobovich\manytomany\ManyToManyBehavior::className(),
+            'class' => \voskobovich\linker\LinkerBehavior::className(),
             'relations' => [
                 'author_ids' => 'authors',
 				'review_ids' => 'reviews',
@@ -221,7 +221,7 @@ In such case, the resulting "Sample" model will look like this:
     {
         return [
             'manyToMany' => [
-                'class' => ManyToManyBehavior::className(),
+                'class' => LinkerBehavior::className(),
                 'relations' => [
                     'rawMaterialPicturesList' => [
                         'rawMaterialPictures',
@@ -278,13 +278,13 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-php composer.phar require --prefer-dist voskobovich/yii2-many-many-behavior "^3.0"
+php composer.phar require --prefer-dist voskobovich/yii2-linker-behavior "^3.0"
 ```
 
 or add
 
 ```
-"voskobovich/yii2-many-many-behavior": "^3.0"
+"voskobovich/yii2-linker-behavior": "^3.0"
 ```
 
 to the require section of your `composer.json` file.

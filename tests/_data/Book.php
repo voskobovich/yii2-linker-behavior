@@ -2,7 +2,7 @@
 
 namespace data;
 
-use voskobovich\manytomany\ManyToManyBehavior;
+use voskobovich\linker\LinkerBehavior;
 
 /**
  * This is the model class for table "book".
@@ -61,7 +61,7 @@ class Book extends \yii\db\ActiveRecord
     {
         return [
             [
-                'class' => ManyToManyBehavior::className(),
+                'class' => LinkerBehavior::className(),
                 'relations' => [
                     'author_list' => ['authors'],
                     'review_list' => ['reviews'],

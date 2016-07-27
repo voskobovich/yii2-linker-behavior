@@ -1,8 +1,8 @@
 <?php
 
-namespace voskobovich\manytomany\updaters;
+namespace voskobovich\linker\updaters;
 
-use voskobovich\manytomany\interfaces\OneToManyUpdaterInterface;
+use voskobovich\linker\interfaces\OneToManyUpdaterInterface;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -10,7 +10,7 @@ use yii\db\Exception;
 
 /**
  * Class OneToManyUpdater
- * @package voskobovich\manytomany\updaters
+ * @package voskobovich\linker\updaters
  */
 class OneToManyUpdater extends BaseUpdater implements OneToManyUpdaterInterface
 {

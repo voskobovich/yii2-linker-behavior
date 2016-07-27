@@ -1,12 +1,12 @@
 <?php
 
-namespace voskobovich\manytomany\interfaces;
+namespace voskobovich\linker\interfaces;
 
 /**
- * Interface ManyToManyBehaviorInterface
- * @package voskobovich\manytomany\interfaces
+ * Interface LinkerBehaviorInterface
+ * @package voskobovich\linker\interfaces
  */
-interface ManyToManyBehaviorInterface
+interface LinkerBehaviorInterface
 {
     /**
      * Call user function

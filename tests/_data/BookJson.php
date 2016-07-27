@@ -2,7 +2,7 @@
 
 namespace data;
 
-use voskobovich\manytomany\ManyToManyBehavior;
+use voskobovich\linker\LinkerBehavior;
 use yii\helpers\Json;
 
 class BookJson extends Book
@@ -12,7 +12,7 @@ class BookJson extends Book
     {
         return [
             [
-                'class' => ManyToManyBehavior::className(),
+                'class' => LinkerBehavior::className(),
                 'relations' => [
                     'author_list' => [
                         'authors',

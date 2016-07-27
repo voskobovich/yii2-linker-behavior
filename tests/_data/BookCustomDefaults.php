@@ -2,7 +2,7 @@
 
 namespace data;
 
-use voskobovich\manytomany\ManyToManyBehavior;
+use voskobovich\linker\LinkerBehavior;
 use Yii;
 
 class BookCustomDefaults extends Book
@@ -22,7 +22,7 @@ class BookCustomDefaults extends Book
     {
         return [
             [
-                'class' => ManyToManyBehavior::className(),
+                'class' => LinkerBehavior::className(),
                 'relations' => [
                     'review_list_none' => [
                         'reviews',

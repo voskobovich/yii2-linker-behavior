@@ -1,18 +1,18 @@
 <?php
 
-namespace voskobovich\manytomany\interfaces;
+namespace voskobovich\linker\interfaces;
 
 /**
  * Interface ManyToManyUpdaterInterface
- * @package voskobovich\manytomany\interfaces
+ * @package voskobovich\linker\interfaces
  */
 interface ManyToManyUpdaterInterface
 {
     /**
-     * @param ManyToManyBehaviorInterface $behavior
+     * @param LinkerBehaviorInterface $behavior
      * @return mixed
      */
-    public function setBehavior(ManyToManyBehaviorInterface $behavior);
+    public function setBehavior(LinkerBehaviorInterface $behavior);
 
     /**
      * @param $relation

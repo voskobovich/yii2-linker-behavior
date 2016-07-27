@@ -1,27 +1,27 @@
 <?php
 
-namespace voskobovich\manytomany\updaters;
+namespace voskobovich\linker\updaters;
 
-use voskobovich\manytomany\interfaces\ManyToManyBehaviorInterface;
+use voskobovich\linker\interfaces\LinkerBehaviorInterface;
 use yii\base\Behavior;
 use yii\base\Object;
 
 /**
  * Class BaseUpdater
- * @package voskobovich\manytomany\updaters
+ * @package voskobovich\linker\updaters
  */
 abstract class BaseUpdater extends Object
 {
     /**
-     * @var ManyToManyBehaviorInterface|Behavior
+     * @var LinkerBehaviorInterface|Behavior
      */
     protected $_behavior;
 
     /**
-     * @param ManyToManyBehaviorInterface $behavior
+     * @param LinkerBehaviorInterface $behavior
      * @return mixed
      */
-    public function setBehavior(ManyToManyBehaviorInterface $behavior)
+    public function setBehavior(LinkerBehaviorInterface $behavior)
     {
         $this->_behavior = $behavior;
     }

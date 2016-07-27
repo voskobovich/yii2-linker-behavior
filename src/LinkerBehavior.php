@@ -1,12 +1,12 @@
 <?php
 
-namespace voskobovich\manytomany;
+namespace voskobovich\linker;
 
-use voskobovich\manytomany\interfaces\ManyToManyBehaviorInterface;
-use voskobovich\manytomany\interfaces\ManyToManyUpdaterInterface;
-use voskobovich\manytomany\interfaces\OneToManyUpdaterInterface;
-use voskobovich\manytomany\updaters\ManyToManyUpdater;
-use voskobovich\manytomany\updaters\OneToManyUpdater;
+use voskobovich\linker\interfaces\LinkerBehaviorInterface;
+use voskobovich\linker\interfaces\ManyToManyUpdaterInterface;
+use voskobovich\linker\interfaces\OneToManyUpdaterInterface;
+use voskobovich\linker\updaters\ManyToManyUpdater;
+use voskobovich\linker\updaters\OneToManyUpdater;
 use Yii;
 use yii\base\Behavior;
 use yii\base\InvalidConfigException;
@@ -14,12 +14,12 @@ use yii\db\ActiveRecord;
 use yii\base\ErrorException;
 
 /**
- * Class ManyToManyBehavior
- * @package voskobovich\manytomany
+ * Class LinkerBehavior
+ * @package voskobovich\linker
  *
  * See README.md for examples
  */
-class ManyToManyBehavior extends Behavior implements ManyToManyBehaviorInterface
+class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
 {
     /**
      * Stores a list of relations, affected by the behavior. Configurable property.
@@ -121,7 +121,7 @@ class ManyToManyBehavior extends Behavior implements ManyToManyBehaviorInterface
                 if (!empty($params['updaterClass'])) {
                     $updater = Yii::createObject($params['updaterClass']);
                     if (!$updater instanceof ManyToManyUpdaterInterface) {
-                        throw new InvalidConfigException('The object passed to "updaterClass" must implement the interface "voskobovich\manytomany\interfaces\ManyToManyUpdaterInterface"');
+                        throw new InvalidConfigException('The object passed to "updaterClass" must implement the interface "voskobovich\linker\interfaces\ManyToManyUpdaterInterface"');
                     }
                 } else {
                     $updater = new ManyToManyUpdater();
@@ -133,7 +133,7 @@ class ManyToManyBehavior extends Behavior implements ManyToManyBehaviorInterface
                 if (!empty($params['updaterClass'])) {
                     $updater = Yii::createObject($params['updaterClass']);
                     if (!$updater instanceof OneToManyUpdaterInterface) {
-                        throw new InvalidConfigException('The object passed to "updaterClass" must implement the interface "voskobovich\manytomany\interfaces\OneToManyUpdaterInterface"');
+                        throw new InvalidConfigException('The object passed to "updaterClass" must implement the interface "voskobovich\linker\interfaces\OneToManyUpdaterInterface"');
                     }
                 } else {
                     $updater = new OneToManyUpdater();
