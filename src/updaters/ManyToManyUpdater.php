@@ -34,11 +34,11 @@ class ManyToManyUpdater extends BaseUpdater implements ManyToManyUpdaterInterfac
             $via = $relation->via[1];
             /** @var ActiveRecord $junctionModelClass */
             $junctionModelClass = $via->modelClass;
-            $viaTableName = $junctionModelClass::tableName();
+            $junctionTable = $junctionModelClass::tableName();
             list($junctionColumn) = array_keys($via->link);
         } else {
             // viaTable()
-            list($viaTableName) = array_values($relation->via->from);
+            list($junctionTable) = array_values($relation->via->from);
             list($junctionColumn) = array_keys($relation->via->link);
         }
 
@@ -47,97 +47,45 @@ class ManyToManyUpdater extends BaseUpdater implements ManyToManyUpdaterInterfac
         $connection = $primaryModel::getDb();
         $transaction = $connection->beginTransaction();
         try {
-            // Load current rows
-            $currentRows = $primaryModel::find()
-                ->from($viaTableName)
-                ->where(ArrayHelper::merge(
+            // Remove old relations
+            $connection->createCommand()
+                ->delete($junctionTable, ArrayHelper::merge(
                     [$junctionColumn => $primaryModelPk],
                     $this->_behavior->getCustomDeleteCondition($attributeName)
                 ))
-                ->indexBy($relatedColumn)
-                ->asArray()
-                ->all();
+                ->execute();
 
-            $currentKeys = array_map(function ($item) use ($relatedColumn) {
-                return $item[$relatedColumn];
-            }, $currentRows);
-
+            // Write new relations
             if (!empty($bindingKeys)) {
-                // Find removed relations
-                $removedKeys = array_diff($currentKeys, $bindingKeys);
-                // Find new relations
-                $addedKeys = array_diff($bindingKeys, $currentKeys);
-                // Find untouched relations
-                $untouchedKeys = array_diff($currentKeys, $removedKeys, $addedKeys);
+                $junctionRows = [];
 
                 $viaTableParams = $this->_behavior->getViaTableParams($attributeName);
-                $viaTableColumns = array_keys($viaTableParams);
 
-                $junctionColumns = [$junctionColumn, $relatedColumn];
-                foreach ($viaTableColumns as $viaTableColumn) {
-                    $junctionColumns[] = $viaTableColumn;
-                }
+                foreach ($bindingKeys as $relatedPk) {
+                    $row = [$primaryModelPk, $relatedPk];
 
-                // Write new relations
-                if (!empty($addedKeys)) {
-                    $junctionRows = [];
-                    foreach ($addedKeys as $addedKey) {
-                        $row = [$primaryModelPk, $addedKey];
-
-                        // Calculate additional viaTable values
-                        foreach ($viaTableColumns as $viaTableColumn) {
-                            $row[] = $this->_behavior->getViaTableValue($attributeName, $viaTableColumn, $addedKey);
-                        }
-
-                        array_push($junctionRows, $row);
+                    // Calculate additional viaTable values
+                    foreach (array_keys($viaTableParams) as $viaTableColumn) {
+                        $row[] = $this->_behavior->getViaTableValue($attributeName, $viaTableColumn, $relatedPk);
                     }
 
-                    $connection->createCommand()
-                        ->batchInsert($viaTableName, $junctionColumns, $junctionRows)
-                        ->execute();
+                    array_push($junctionRows, $row);
                 }
 
-                // Processing untouched relations
-                if (!empty($untouchedKeys) && !empty($viaTableColumns)) {
-                    foreach ($untouchedKeys as $untouchedKey) {
-                        // Calculate additional viaTable values
-                        $row = [];
-                        foreach ($viaTableColumns as $viaTableColumn) {
-                            $row[$viaTableColumn] = $this->_behavior->getViaTableValue($attributeName, $viaTableColumn,
-                                $untouchedKey, false);
-                        }
+                $cols = [$junctionColumn, $relatedColumn];
 
-                        $currentRow = (array)$currentRows[$untouchedKey];
-                        unset($currentRow[$junctionColumn]);
-                        unset($currentRow[$relatedColumn]);
-
-                        if (array_diff_assoc($currentRow, $row)) {
-                            $connection->createCommand()
-                                ->update($viaTableName, $row, [
-                                    $junctionColumn => $primaryModelPk,
-                                    $relatedColumn => $untouchedKey
-                                ])
-                                ->execute();
-                        }
-                    }
+                // Additional viaTable columns
+                foreach (array_keys($viaTableParams) as $viaTableColumn) {
+                    $cols[] = $viaTableColumn;
                 }
-            } else {
-                $removedKeys = $currentKeys;
-            }
 
-            if (!empty($removedKeys)) {
                 $connection->createCommand()
-                    ->delete($viaTableName, ArrayHelper::merge(
-                        [$junctionColumn => $primaryModelPk],
-                        [$relatedColumn => $removedKeys],
-                        $this->_behavior->getCustomDeleteCondition($attributeName)
-                    ))
+                    ->batchInsert($junctionTable, $cols, $junctionRows)
                     ->execute();
             }
-
             $transaction->commit();
         } catch (Exception $ex) {
-            $transaction->rollBack();
+            $transaction->rollback();
             throw $ex;
         }
     }
