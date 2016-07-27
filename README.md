@@ -1,4 +1,4 @@
-Yii2 ManyToMany Behavior
+Yii2 Linker Behavior
 ========================
 This behavior makes it easy to maintain many-to-many and one-to-many relations in your ActiveRecord models.
 
