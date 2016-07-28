@@ -6,17 +6,17 @@ namespace voskobovich\linker\interfaces;
  * Interface OneToManyUpdaterInterface
  * @package voskobovich\linker\interfaces
  */
-interface OneToManyUpdaterInterface
+interface OneToManyUpdaterInterface extends UpdaterInterface
 {
     /**
-     * @param LinkerBehaviorInterface $behavior
+     * Get default value for an attribute (used for 1-N relations)
+     * @param string $attributeName
      * @return mixed
      */
-    public function setBehavior(LinkerBehaviorInterface $behavior);
+    public function getDefaultValue($attributeName);
 
     /**
-     * @param $relation
-     * @param $attributeName
+     * Save relations
      */
-    public function saveOneToManyRelation($relation, $attributeName);
+    public function save();
 }

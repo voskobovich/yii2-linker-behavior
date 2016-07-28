@@ -6,17 +6,43 @@ namespace voskobovich\linker\interfaces;
  * Interface ManyToManyUpdaterInterface
  * @package voskobovich\linker\interfaces
  */
-interface ManyToManyUpdaterInterface
+interface ManyToManyUpdaterInterface extends UpdaterInterface
 {
     /**
-     * @param LinkerBehaviorInterface $behavior
-     * @return mixed
+     * Set additional attributes of viaTable
+     * @param $value
      */
-    public function setBehavior(LinkerBehaviorInterface $behavior);
+    public function setViaTableAttributes($value);
 
     /**
-     * @param $relation
-     * @param $attributeName
+     * Get additional attributes of viaTable
+     * @return array
      */
-    public function saveManyToManyRelation($relation, $attributeName);
+    public function getViaTableAttributes();
+
+    /**
+     * Get additional value of attribute in viaTable
+     * @param string $viaTableAttribute
+     * @param integer $relatedPk
+     * @param bool $isNewRecord
+     * @return mixed
+     */
+    public function getViaTableAttributeValue($viaTableAttribute, $relatedPk, $isNewRecord = true);
+
+    /**
+     * Set condition used to delete old records from viaTable.
+     * @param $value
+     */
+    public function setDeleteCondition($value);
+
+    /**
+     * Get condition used to delete old records from viaTable.
+     * @return array
+     */
+    public function getDeleteCondition();
+
+    /**
+     * Save relations
+     */
+    public function save();
 }

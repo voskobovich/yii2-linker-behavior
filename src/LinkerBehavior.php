@@ -118,48 +118,33 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
 
             if (!empty($relation->via) && $relation->multiple) {
                 // Many-to-many
-                if (!empty($params['updater'])) {
-                    $updater = Yii::createObject($params['updater']);
-                    if (!$updater instanceof ManyToManyUpdaterInterface) {
-                        throw new InvalidConfigException('The object passed to "updaterClass" must implement the interface "voskobovich\linker\interfaces\ManyToManyUpdaterInterface"');
-                    }
-                } else {
-                    $updater = new ManyToManyUpdater();
+                if (empty($params['updater']['class'])) {
+                    $params['updater']['class'] = ManyToManyUpdater::className();
                 }
-                $updater->setBehavior($this);
-                $updater->saveManyToManyRelation($relation, $attributeName);
+
+                $updater = Yii::createObject($params['updater']);
+                if (!$updater instanceof ManyToManyUpdaterInterface) {
+                    throw new InvalidConfigException('Updater class must implement the interface "voskobovich\linker\interfaces\ManyToManyUpdaterInterface"');
+                }
             } elseif (!empty($relation->link) && $relation->multiple) {
                 // One-to-many on the many side
-                if (!empty($params['updater'])) {
-                    $updater = Yii::createObject($params['updater']);
-                    if (!$updater instanceof OneToManyUpdaterInterface) {
-                        throw new InvalidConfigException('The object passed to "updaterClass" must implement the interface "voskobovich\linker\interfaces\OneToManyUpdaterInterface"');
-                    }
-                } else {
-                    $updater = new OneToManyUpdater();
+                if (empty($params['updater']['class'])) {
+                    $params['updater']['class'] = OneToManyUpdater::className();
                 }
-                $updater->setBehavior($this);
-                $updater->saveOneToManyRelation($relation, $attributeName);
+
+                $updater = Yii::createObject($params['updater']);
+                if (!$updater instanceof OneToManyUpdaterInterface) {
+                    throw new InvalidConfigException('Updater class must implement the interface "voskobovich\linker\interfaces\OneToManyUpdaterInterface"');
+                }
             } else {
                 throw new ErrorException('Relationship type not supported.');
             }
-        }
-    }
 
-    /**
-     * Call user function
-     * @param $function
-     * @param $value
-     * @return mixed
-     * @throws ErrorException
-     */
-    public function callUserFunction($function, $value)
-    {
-        if (!is_array($function) && !is_callable($function)) {
-            throw new ErrorException('This value is not a function');
+            $updater->setBehavior($this);
+            $updater->setRelation($relation);
+            $updater->setAttributeName($attributeName);
+            $updater->save();
         }
-
-        return call_user_func($function, $value);
     }
 
     /**
@@ -180,80 +165,6 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
     public function getNewValue($attributeName)
     {
         return $this->_values[$attributeName];
-    }
-
-    /**
-     * Get default value for an attribute (used for 1-N relations)
-     * @param string $attributeName
-     * @return mixed
-     */
-    public function getDefaultValue($attributeName)
-    {
-        $relationParams = $this->getRelationParams($attributeName);
-
-        if (!isset($relationParams['default'])) {
-            return null;
-        }
-
-        if (is_callable($relationParams['default'])) {
-            $closure = $relationParams['default'];
-            $relationName = $this->getRelationName($attributeName);
-            return call_user_func($closure, $this->owner, $relationName, $attributeName);
-        }
-
-        return $relationParams['default'];
-    }
-
-    /**
-     * Calculate additional value of viaTable
-     * @param string $attributeName
-     * @param string $viaTableAttribute
-     * @param integer $relatedPk
-     * @param bool $isNewRecord
-     * @return mixed
-     */
-    public function getViaTableValue($attributeName, $viaTableAttribute, $relatedPk, $isNewRecord = true)
-    {
-        $viaTableParams = $this->getViaTableParams($attributeName);
-
-        if (!isset($viaTableParams[$viaTableAttribute])) {
-            return null;
-        }
-
-        if (is_callable($viaTableParams[$viaTableAttribute])) {
-            $closure = $viaTableParams[$viaTableAttribute];
-            $relationName = $this->getRelationName($attributeName);
-            return call_user_func($closure, $this->owner, $relationName, $attributeName, $relatedPk, $isNewRecord);
-        }
-
-        return $viaTableParams[$viaTableAttribute];
-    }
-
-    /**
-     * Get additional parameters of viaTable
-     * @param string $attributeName
-     * @return array
-     */
-    public function getViaTableParams($attributeName)
-    {
-        $params = $this->getRelationParams($attributeName);
-        return isset($params['viaTableValues'])
-            ? $params['viaTableValues']
-            : [];
-    }
-
-    /**
-     * Get custom condition used to delete old records.
-     * @param string $attributeName
-     * @return array
-     */
-    public function getCustomDeleteCondition($attributeName)
-    {
-        $params = $this->getRelationParams($attributeName);
-
-        return isset($params['customDeleteCondition'])
-            ? $params['customDeleteCondition']
-            : [];
     }
 
     /**
@@ -304,6 +215,22 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
         }
 
         return null;
+    }
+
+    /**
+     * Call user function
+     * @param $function
+     * @param $value
+     * @return mixed
+     * @throws ErrorException
+     */
+    public function callUserFunction($function, $value)
+    {
+        if (!is_array($function) && !is_callable($function)) {
+            throw new ErrorException('This value is not a function');
+        }
+
+        return call_user_func($function, $value);
     }
 
     /**

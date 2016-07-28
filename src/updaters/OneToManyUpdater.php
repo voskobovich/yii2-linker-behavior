@@ -4,7 +4,6 @@ namespace voskobovich\linker\updaters;
 
 use voskobovich\linker\interfaces\OneToManyUpdaterInterface;
 use Yii;
-use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
 
@@ -12,41 +11,37 @@ use yii\db\Exception;
  * Class OneToManyUpdater
  * @package voskobovich\linker\updaters
  */
-class OneToManyUpdater extends BaseUpdater implements OneToManyUpdaterInterface
+class OneToManyUpdater extends BaseOneToManyUpdater implements OneToManyUpdaterInterface
 {
     /**
-     * @param ActiveQuery $relation
-     * @param string $attributeName
      * @throws Exception
      */
-    public function saveOneToManyRelation($relation, $attributeName)
+    public function save()
     {
         /** @var ActiveRecord $primaryModel */
-        $primaryModel = $this->_behavior->owner;
+        $primaryModel = $this->getBehavior()->owner;
         $primaryModelPk = $primaryModel->getPrimaryKey();
 
-        $bindingKeys = $this->_behavior->getNewValue($attributeName);
+        $bindingKeys = $this->getBehavior()->getNewValue($this->getAttributeName());
 
         // HasMany, primary model HAS MANY foreign models, must update foreign model table
         /** @var ActiveRecord $foreignModel */
-        $foreignModel = Yii::createObject($relation->modelClass);
+        $foreignModel = Yii::createObject($this->getRelation()->modelClass);
         $manyTable = $foreignModel->tableName();
 
-        list($manyTableFkColumn) = array_keys($relation->link);
+        list($manyTableFkColumn) = array_keys($this->getRelation()->link);
         $manyTableFkValue = $primaryModelPk;
         list($manyTablePkColumn) = ($foreignModel->primaryKey());
 
         $connection = $foreignModel::getDb();
         $transaction = $connection->beginTransaction();
 
-        $defaultValue = $this->_behavior->getDefaultValue($attributeName);
-
         try {
             // Remove old relations
             $connection->createCommand()
                 ->update(
                     $manyTable,
-                    [$manyTableFkColumn => $defaultValue],
+                    [$manyTableFkColumn => $this->getDefaultValue()],
                     [$manyTableFkColumn => $manyTableFkValue])
                 ->execute();
 

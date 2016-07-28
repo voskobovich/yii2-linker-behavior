@@ -3,7 +3,6 @@
 namespace voskobovich\linker\updaters;
 
 use voskobovich\linker\interfaces\ManyToManyUpdaterInterface;
-use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
 use yii\helpers\ArrayHelper;
@@ -12,37 +11,35 @@ use yii\helpers\ArrayHelper;
  * Class ManyToManyUpdater
  * @package voskobovich\linker\updaters
  */
-class ManyToManyUpdater extends BaseUpdater implements ManyToManyUpdaterInterface
+class ManyToManyUpdater extends BaseManyToManyUpdater implements ManyToManyUpdaterInterface
 {
     /**
-     * @param ActiveQuery $relation
-     * @param string $attributeName
      * @throws Exception
      * @throws \yii\db\Exception
      */
-    public function saveManyToManyRelation($relation, $attributeName)
+    public function save()
     {
         /** @var ActiveRecord $primaryModel */
-        $primaryModel = $this->_behavior->owner;
+        $primaryModel = $this->getBehavior()->owner;
         $primaryModelPk = $primaryModel->getPrimaryKey();
 
-        $bindingKeys = $this->_behavior->getNewValue($attributeName);
+        $bindingKeys = $this->getBehavior()->getNewValue($this->getAttributeName());
 
         // Assuming junction column is visible from the primary model connection
-        if (is_array($relation->via)) {
+        if (is_array($this->getRelation()->via)) {
             // via()
-            $via = $relation->via[1];
+            $via = $this->getRelation()->via[1];
             /** @var ActiveRecord $junctionModelClass */
             $junctionModelClass = $via->modelClass;
             $junctionTable = $junctionModelClass::tableName();
             list($junctionColumn) = array_keys($via->link);
         } else {
             // viaTable()
-            list($junctionTable) = array_values($relation->via->from);
-            list($junctionColumn) = array_keys($relation->via->link);
+            list($junctionTable) = array_values($this->getRelation()->via->from);
+            list($junctionColumn) = array_keys($this->getRelation()->via->link);
         }
 
-        list($relatedColumn) = array_values($relation->link);
+        list($relatedColumn) = array_values($this->getRelation()->link);
 
         $connection = $primaryModel::getDb();
         $transaction = $connection->beginTransaction();
@@ -51,7 +48,7 @@ class ManyToManyUpdater extends BaseUpdater implements ManyToManyUpdaterInterfac
             $connection->createCommand()
                 ->delete($junctionTable, ArrayHelper::merge(
                     [$junctionColumn => $primaryModelPk],
-                    $this->_behavior->getCustomDeleteCondition($attributeName)
+                    $this->getDeleteCondition()
                 ))
                 ->execute();
 
@@ -59,14 +56,14 @@ class ManyToManyUpdater extends BaseUpdater implements ManyToManyUpdaterInterfac
             if (!empty($bindingKeys)) {
                 $junctionRows = [];
 
-                $viaTableParams = $this->_behavior->getViaTableParams($attributeName);
+                $viaTableAttributes = $this->getViaTableAttributes();
 
                 foreach ($bindingKeys as $relatedPk) {
                     $row = [$primaryModelPk, $relatedPk];
 
                     // Calculate additional viaTable values
-                    foreach (array_keys($viaTableParams) as $viaTableColumn) {
-                        $row[] = $this->_behavior->getViaTableValue($attributeName, $viaTableColumn, $relatedPk);
+                    foreach (array_keys($viaTableAttributes) as $viaTableColumnName) {
+                        $row[] = $this->getViaTableAttributeValue($viaTableColumnName, $relatedPk);
                     }
 
                     array_push($junctionRows, $row);
@@ -75,8 +72,8 @@ class ManyToManyUpdater extends BaseUpdater implements ManyToManyUpdaterInterfac
                 $cols = [$junctionColumn, $relatedColumn];
 
                 // Additional viaTable columns
-                foreach (array_keys($viaTableParams) as $viaTableColumn) {
-                    $cols[] = $viaTableColumn;
+                foreach (array_keys($viaTableAttributes) as $viaTableColumnName) {
+                    $cols[] = $viaTableColumnName;
                 }
 
                 $connection->createCommand()

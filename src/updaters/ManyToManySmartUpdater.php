@@ -3,7 +3,6 @@
 namespace voskobovich\linker\updaters;
 
 use voskobovich\linker\interfaces\ManyToManyUpdaterInterface;
-use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
 use yii\helpers\ArrayHelper;
@@ -12,37 +11,35 @@ use yii\helpers\ArrayHelper;
  * Class ManyToManySmartUpdater
  * @package voskobovich\linker\updaters
  */
-class ManyToManySmartUpdater extends BaseUpdater implements ManyToManyUpdaterInterface
+class ManyToManySmartUpdater extends BaseManyToManyUpdater implements ManyToManyUpdaterInterface
 {
     /**
-     * @param ActiveQuery $relation
-     * @param string $attributeName
      * @throws Exception
      * @throws \yii\db\Exception
      */
-    public function saveManyToManyRelation($relation, $attributeName)
+    public function save()
     {
         /** @var ActiveRecord $primaryModel */
-        $primaryModel = $this->_behavior->owner;
+        $primaryModel = $this->getBehavior()->owner;
         $primaryModelPk = $primaryModel->getPrimaryKey();
 
-        $bindingKeys = $this->_behavior->getNewValue($attributeName);
+        $bindingKeys = $this->getBehavior()->getNewValue($this->getAttributeName());
 
         // Assuming junction column is visible from the primary model connection
-        if (is_array($relation->via)) {
+        if (is_array($this->getRelation()->via)) {
             // via()
-            $via = $relation->via[1];
+            $via = $this->getRelation()->via[1];
             /** @var ActiveRecord $junctionModelClass */
             $junctionModelClass = $via->modelClass;
             $viaTableName = $junctionModelClass::tableName();
             list($junctionColumn) = array_keys($via->link);
         } else {
             // viaTable()
-            list($viaTableName) = array_values($relation->via->from);
-            list($junctionColumn) = array_keys($relation->via->link);
+            list($viaTableName) = array_values($this->getRelation()->via->from);
+            list($junctionColumn) = array_keys($this->getRelation()->via->link);
         }
 
-        list($relatedColumn) = array_values($relation->link);
+        list($relatedColumn) = array_values($this->getRelation()->link);
 
         $connection = $primaryModel::getDb();
         $transaction = $connection->beginTransaction();
@@ -52,7 +49,7 @@ class ManyToManySmartUpdater extends BaseUpdater implements ManyToManyUpdaterInt
                 ->from($viaTableName)
                 ->where(ArrayHelper::merge(
                     [$junctionColumn => $primaryModelPk],
-                    $this->_behavior->getCustomDeleteCondition($attributeName)
+                    $this->getDeleteCondition()
                 ))
                 ->indexBy($relatedColumn)
                 ->asArray()
@@ -70,12 +67,12 @@ class ManyToManySmartUpdater extends BaseUpdater implements ManyToManyUpdaterInt
                 // Find untouched relations
                 $untouchedKeys = array_diff($currentKeys, $removedKeys, $addedKeys);
 
-                $viaTableParams = $this->_behavior->getViaTableParams($attributeName);
-                $viaTableColumns = array_keys($viaTableParams);
+                $viaTableAttributes = $this->getViaTableAttributes();
+                $viaTableColumns = array_keys($viaTableAttributes);
 
                 $junctionColumns = [$junctionColumn, $relatedColumn];
-                foreach ($viaTableColumns as $viaTableColumn) {
-                    $junctionColumns[] = $viaTableColumn;
+                foreach ($viaTableColumns as $viaTableColumnName) {
+                    $junctionColumns[] = $viaTableColumnName;
                 }
 
                 // Write new relations
@@ -85,8 +82,8 @@ class ManyToManySmartUpdater extends BaseUpdater implements ManyToManyUpdaterInt
                         $row = [$primaryModelPk, $addedKey];
 
                         // Calculate additional viaTable values
-                        foreach ($viaTableColumns as $viaTableColumn) {
-                            $row[] = $this->_behavior->getViaTableValue($attributeName, $viaTableColumn, $addedKey);
+                        foreach ($viaTableColumns as $viaTableColumnName) {
+                            $row[] = $this->getViaTableAttributeValue($viaTableColumnName, $addedKey);
                         }
 
                         array_push($junctionRows, $row);
@@ -102,8 +99,8 @@ class ManyToManySmartUpdater extends BaseUpdater implements ManyToManyUpdaterInt
                     foreach ($untouchedKeys as $untouchedKey) {
                         // Calculate additional viaTable values
                         $row = [];
-                        foreach ($viaTableColumns as $viaTableColumn) {
-                            $row[$viaTableColumn] = $this->_behavior->getViaTableValue($attributeName, $viaTableColumn,
+                        foreach ($viaTableColumns as $viaTableColumnName) {
+                            $row[$viaTableColumnName] = $this->getViaTableAttributeValue($viaTableColumnName,
                                 $untouchedKey, false);
                         }
 
@@ -130,7 +127,7 @@ class ManyToManySmartUpdater extends BaseUpdater implements ManyToManyUpdaterInt
                     ->delete($viaTableName, ArrayHelper::merge(
                         [$junctionColumn => $primaryModelPk],
                         [$relatedColumn => $removedKeys],
-                        $this->_behavior->getCustomDeleteCondition($attributeName)
+                        $this->getDeleteCondition()
                     ))
                     ->execute();
             }
