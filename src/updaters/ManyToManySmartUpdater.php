@@ -2,7 +2,6 @@
 
 namespace voskobovich\linker\updaters;
 
-use voskobovich\linker\interfaces\ManyToManyUpdaterInterface;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
 use yii\helpers\ArrayHelper;
@@ -11,7 +10,7 @@ use yii\helpers\ArrayHelper;
  * Class ManyToManySmartUpdater
  * @package voskobovich\linker\updaters
  */
-class ManyToManySmartUpdater extends BaseManyToManyUpdater implements ManyToManyUpdaterInterface
+class ManyToManySmartUpdater extends BaseManyToManyUpdater
 {
     /**
      * @throws Exception

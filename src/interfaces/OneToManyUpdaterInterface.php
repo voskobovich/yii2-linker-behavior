@@ -10,10 +10,9 @@ interface OneToManyUpdaterInterface extends UpdaterInterface
 {
     /**
      * Get default value for an attribute (used for 1-N relations)
-     * @param string $attributeName
      * @return mixed
      */
-    public function getDefaultValue($attributeName);
+    public function getDefaultValue();
 
     /**
      * Save relations

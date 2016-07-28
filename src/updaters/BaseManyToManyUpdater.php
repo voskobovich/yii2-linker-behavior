@@ -2,13 +2,14 @@
 
 namespace voskobovich\linker\updaters;
 
+use voskobovich\linker\interfaces\ManyToManyUpdaterInterface;
 use yii\base\InvalidParamException;
 
 /**
  * Class BaseManyToManyUpdater
  * @package voskobovich\linker\updaters
  */
-abstract class BaseManyToManyUpdater extends BaseUpdater
+abstract class BaseManyToManyUpdater extends BaseUpdater implements ManyToManyUpdaterInterface
 {
     /**
      * List of attributes and values by viaTable
@@ -84,4 +85,9 @@ abstract class BaseManyToManyUpdater extends BaseUpdater
     {
         return $this->_deleteCondition;
     }
+
+    /**
+     * Save relations
+     */
+    abstract public function save();
 }

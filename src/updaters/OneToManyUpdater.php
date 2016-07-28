@@ -2,7 +2,6 @@
 
 namespace voskobovich\linker\updaters;
 
-use voskobovich\linker\interfaces\OneToManyUpdaterInterface;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
@@ -11,7 +10,7 @@ use yii\db\Exception;
  * Class OneToManyUpdater
  * @package voskobovich\linker\updaters
  */
-class OneToManyUpdater extends BaseOneToManyUpdater implements OneToManyUpdaterInterface
+class OneToManyUpdater extends BaseOneToManyUpdater
 {
     /**
      * @throws Exception

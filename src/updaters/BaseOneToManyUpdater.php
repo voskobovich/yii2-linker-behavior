@@ -2,11 +2,13 @@
 
 namespace voskobovich\linker\updaters;
 
+use voskobovich\linker\interfaces\OneToManyUpdaterInterface;
+
 /**
  * Class BaseOneToManyUpdater
  * @package voskobovich\linker\updaters
  */
-abstract class BaseOneToManyUpdater extends BaseUpdater
+abstract class BaseOneToManyUpdater extends BaseUpdater implements OneToManyUpdaterInterface
 {
     /**
      * @var mixed
@@ -35,4 +37,9 @@ abstract class BaseOneToManyUpdater extends BaseUpdater
     {
         return $this->_defaultValue;
     }
+
+    /**
+     * Save relations
+     */
+    abstract public function save();
 }
