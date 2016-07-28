@@ -29,7 +29,7 @@ As an example, let's assume you are dealing with entities like `Book`, `Author` 
 public function getAuthors()
 {
     return $this->hasMany(Author::className(), ['id' => 'author_id'])
-                ->viaTable('book_has_author', ['book_id' => 'id']);
+                ->viaTable('{{%book_has_author}}', ['book_id' => 'id']);
 }
 
 public function getReviews()

@@ -118,8 +118,8 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
 
             if (!empty($relation->via) && $relation->multiple) {
                 // Many-to-many
-                if (!empty($params['updaterClass'])) {
-                    $updater = Yii::createObject($params['updaterClass']);
+                if (!empty($params['updater'])) {
+                    $updater = Yii::createObject($params['updater']);
                     if (!$updater instanceof ManyToManyUpdaterInterface) {
                         throw new InvalidConfigException('The object passed to "updaterClass" must implement the interface "voskobovich\linker\interfaces\ManyToManyUpdaterInterface"');
                     }
@@ -130,8 +130,8 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
                 $updater->saveManyToManyRelation($relation, $attributeName);
             } elseif (!empty($relation->link) && $relation->multiple) {
                 // One-to-many on the many side
-                if (!empty($params['updaterClass'])) {
-                    $updater = Yii::createObject($params['updaterClass']);
+                if (!empty($params['updater'])) {
+                    $updater = Yii::createObject($params['updater']);
                     if (!$updater instanceof OneToManyUpdaterInterface) {
                         throw new InvalidConfigException('The object passed to "updaterClass" must implement the interface "voskobovich\linker\interfaces\OneToManyUpdaterInterface"');
                     }
