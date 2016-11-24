@@ -1,13 +1,21 @@
 {
-    "name": "voskobovich/yii2-many-many-behavior",
-    "description": "This behavior makes it easy to maintain relations many-to-many in the your ActiveRecord model.",
-    "keywords": ["behavior", "active record", "yii2", "many-to-many", "relation"],
-    "homepage": "https://github.com/voskobovich/ManyToManyBehavior",
+    "name": "voskobovich/yii2-linker-behavior",
+    "description": "This behavior makes it easy to maintain many-to-many and one-to-many relations in your ActiveRecord models.",
+    "keywords": [
+        "behavior",
+        "ar",
+        "active record",
+        "yii2",
+        "many-to-many",
+        "one-to-many",
+        "relations"
+    ],
+    "homepage": "https://github.com/voskobovich/yii2-linker-behavior",
     "type": "yii2-behavior",
     "license": "MIT",
     "support": {
-        "issues": "https://github.com/voskobovich/ManyToManyBehavior/issues",
-        "source": "https://github.com/voskobovich/ManyToManyBehavior"
+        "issues": "https://github.com/voskobovich/yii2-linker-behavior/issues",
+        "source": "https://github.com/voskobovich/yii2-linker-behavior"
     },
     "authors": [
         {
@@ -23,11 +31,14 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "yiisoft/yii2": "^2"
+        "yiisoft/yii2": "^2",
+        "fxp/composer-asset-plugin": "*"
     },
     "autoload": {
         "psr-4": {
-            "voskobovich\\behaviors\\": "src"
+            "voskobovich\\linker\\": "src",
+            "voskobovich\\linker\\interfaces\\": "src/interfaces",
+            "voskobovich\\linker\\updaters\\": "src/updaters"
         }
     },
     "require-dev": {

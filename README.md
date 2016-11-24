@@ -1,16 +1,19 @@
-Yii2 ManyToMany Behavior
+Yii2 Linker Behavior
 ========================
+
+Older name **Yii2 ManyToMany Behavior**.
+
 This behavior makes it easy to maintain many-to-many and one-to-many relations in your ActiveRecord models.
 
-[![License](https://poser.pugx.org/voskobovich/yii2-many-many-behavior/license.svg)](https://packagist.org/packages/voskobovich/yii2-many-many-behavior)
-[![Latest Stable Version](https://poser.pugx.org/voskobovich/yii2-many-many-behavior/v/stable.svg)](https://packagist.org/packages/voskobovich/yii2-many-many-behavior)
-[![Latest Unstable Version](https://poser.pugx.org/voskobovich/yii2-many-many-behavior/v/unstable.svg)](https://packagist.org/packages/voskobovich/yii2-many-many-behavior)
-[![Total Downloads](https://poser.pugx.org/voskobovich/yii2-many-many-behavior/downloads.svg)](https://packagist.org/packages/voskobovich/yii2-many-many-behavior)
-[![Build Status](https://travis-ci.org/voskobovich/yii2-many-to-many-behavior.svg?branch=master)](https://travis-ci.org/voskobovich/yii2-many-many-behavior)
+[![License](https://poser.pugx.org/voskobovich/yii2-linker-behavior/license.svg)](https://packagist.org/packages/voskobovich/yii2-linker-behavior)
+[![Latest Stable Version](https://poser.pugx.org/voskobovich/yii2-linker-behavior/v/stable.svg)](https://packagist.org/packages/voskobovich/yii2-linker-behavior)
+[![Latest Unstable Version](https://poser.pugx.org/voskobovich/yii2-linker-behavior/v/unstable.svg)](https://packagist.org/packages/voskobovich/yii2-linker-behavior)
+[![Total Downloads](https://poser.pugx.org/voskobovich/yii2-linker-behavior/downloads.svg)](https://packagist.org/packages/voskobovich/yii2-linker-behavior)
+[![Build Status](https://travis-ci.org/voskobovich/yii2-linker-behavior.svg?branch=master)](https://travis-ci.org/voskobovich/yii2-linker-behavior)
 
 Support
 ---
-[GutHub issues](https://github.com/voskobovich/yii2-many-to-many-behavior/issues).
+[GutHub issues](https://github.com/voskobovich/yii2-linker-behavior/issues).
 
 Usage
 -----
@@ -26,7 +29,7 @@ As an example, let's assume you are dealing with entities like `Book`, `Author` 
 public function getAuthors()
 {
     return $this->hasMany(Author::className(), ['id' => 'author_id'])
-                ->viaTable('book_has_author', ['book_id' => 'id']);
+                ->viaTable('{{%book_has_author}}', ['book_id' => 'id']);
 }
 
 public function getReviews()
@@ -40,7 +43,7 @@ public function behaviors()
 {
     return [
         [
-            'class' => \voskobovich\behaviors\ManyToManyBehavior::className(),
+            'class' => \voskobovich\linker\LinkerBehavior::className(),
             'relations' => [
                 'author_ids' => 'authors',
 				'review_ids' => 'reviews',
@@ -131,21 +134,23 @@ Specifying getters and setters for the primary attribute (`author_ids` in the ab
 
 ### Custom junction table values ###
 
-For seting additional values in junction table (apart columns required for relation), you can use `viaTableValues`:
+For seting additional values in junction table (apart columns required for relation), you can use `viaTableAttributesValue`:
 
 ```php
 ...
 'author_ids' => [
     'authors',
-    'viaTableValues' => [
-        'status_key' => BookHasAuthor::STATUS_ACTIVE,
-        'created_at' => function() {
-            return new \yii\db\Expression('NOW()');
-        },
-        'is_main' => function($model, $relationName, $attributeName, $relatedPk) {
-            return array_search($relatedPk, $model->author_ids) === 0;
-        },
-    ],
+    'updater' => [
+        'viaTableAttributesValue' => [
+            'status_key' => BookHasAuthor::STATUS_ACTIVE,
+            'created_at' => function() {
+                return new \yii\db\Expression('NOW()');
+            },
+            'is_main' => function($model, $relationName, $attributeName, $relatedPk) {
+                return array_search($relatedPk, $model->author_ids) === 0;
+            },
+        ],
+    ]
 ]
 ...
 ```
@@ -160,22 +165,26 @@ You can supply a constant value like so:
 ...
 'review_ids' => [
     'reviews',
-    'default' => 17,
+    'updater' => [
+        'defaultValue' => 17,
+    ]
 ],
 ...
 ```
 
-It is also possible to assign the default value to `NULL` explicitly, like so: `'default' => null`. Another option is to provide a function to calculate the default value:
+It is also possible to assign the default value to `NULL` explicitly, like so: `'defaultValue' => null`. Another option is to provide a function to calculate the default value:
 
 ```php
 ...
 'review_ids' => [
     'reviews',
-    'default' => function($model, $relationName, $attributeName) {
-        //default value calculation
-        //...
-        return $defaultValue;
-    },
+    'updater' => [
+        'defaultValue' => function($model, $relationName, $attributeName) {
+            //default value calculation
+            //...
+            return $defaultValue;
+        },
+    ]
 ],
 ...
 ```
@@ -205,7 +214,7 @@ When you are implementing multiple ManyToMany relations in the same model, and t
 you may face and issue when your junction records will not be saved properly.
 
 This happens because old junction records are dropped each time new relation is saved.
-To avoid deletion of records that were just saved, you will need to set `customDeleteCondition` param.
+To avoid deletion of records that were just saved, you will need to set `viaTableDeleteCondition` param.
 
 This delete condition will be merged with primary delete condition and may be used to fine tune your delete query.
 
@@ -221,25 +230,29 @@ In such case, the resulting "Sample" model will look like this:
     {
         return [
             'manyToMany' => [
-                'class' => ManyToManyBehavior::className(),
+                'class' => LinkerBehavior::className(),
                 'relations' => [
                     'rawMaterialPicturesList' => [
                         'rawMaterialPictures',
-                        'viaTableValues' => [
-                            'type_key' => 'RAW_MATERIAL_PICTURES',
-                        ],
-                        'customDeleteCondition' => [
-                            'type_key' => 'RAW_MATERIAL_PICTURES',
-                        ],
+                        'updater' => [
+                            'viaTableAttributesValue' => [
+                                'type_key' => 'RAW_MATERIAL_PICTURES',
+                            ],
+                            'viaTableDeleteCondition' => [
+                                'type_key' => 'RAW_MATERIAL_PICTURES',
+                            ],
+                        ]
                     ],
                     'molecularStructureList' => [
                         'molecularStructure',
-                        'viaTableValues' => [
-                            'type_key' => 'MOLECULAR_STRUCTURE',
-                        ],
-                        'customDeleteCondition' => [
-                            'type_key' => 'MOLECULAR_STRUCTURE',
-                        ],
+                        'updater' => [
+                            'viaTableAttributesValue' => [
+                                'type_key' => 'MOLECULAR_STRUCTURE',
+                            ],
+                            'viaTableDeleteCondition' => [
+                                'type_key' => 'MOLECULAR_STRUCTURE',
+                            ],
+                        ]
                     ],
                 ],
             ],
@@ -278,13 +291,13 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-php composer.phar require --prefer-dist voskobovich/yii2-many-many-behavior "^3.0"
+php composer.phar require --prefer-dist voskobovich/yii2-linker-behavior "^3.0"
 ```
 
 or add
 
 ```
-"voskobovich/yii2-many-many-behavior": "^3.0"
+"voskobovich/yii2-linker-behavior": "^3.0"
 ```
 
 to the require section of your `composer.json` file.

@@ -2,27 +2,32 @@
 
 namespace data;
 
-use Yii;
+use voskobovich\linker\LinkerBehavior;
 use yii\helpers\Json;
 
+/**
+ * Class BookBadFields
+ * @package data
+ */
 class BookBadFields extends Book
 {
-
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
-    return
-        [
-            [
-                'class' => \voskobovich\behaviors\ManyToManyBehavior::className(),
+        return [
+            'linkerBehavior' => [
+                'class' => LinkerBehavior::className(),
                 'relations' => [
                     'author' => [
                         'authors',
                         'fields' => [
                             'list_json' => [
-                                'get' => function($value) {
+                                'get' => function ($value) {
                                     return Json::encode($value);
                                 },
-                                'set' => function($value) {
+                                'set' => function ($value) {
                                     return Json::decode($value);
                                 },
                             ],
@@ -32,10 +37,10 @@ class BookBadFields extends Book
                         'reviews',
                         'fields' => [
                             'json' => [
-                                'get' => function($value) {
+                                'get' => function ($value) {
                                     return Json::encode($value);
                                 },
-                                'set' => function($value) {
+                                'set' => function ($value) {
                                     return Json::decode($value);
                                 },
                             ],
@@ -45,5 +50,4 @@ class BookBadFields extends Book
             ],
         ];
     }
-
 }
