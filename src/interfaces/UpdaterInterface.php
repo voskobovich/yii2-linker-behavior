@@ -45,4 +45,9 @@ interface UpdaterInterface
      * @return string
      */
     public function getAttributeName();
+
+    /**
+     * Save relations
+     */
+    public function save();
 }

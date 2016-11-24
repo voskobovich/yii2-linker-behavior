@@ -134,21 +134,23 @@ Specifying getters and setters for the primary attribute (`author_ids` in the ab
 
 ### Custom junction table values ###
 
-For seting additional values in junction table (apart columns required for relation), you can use `viaTableValues`:
+For seting additional values in junction table (apart columns required for relation), you can use `viaTableAttributesValue`:
 
 ```php
 ...
 'author_ids' => [
     'authors',
-    'viaTableValues' => [
-        'status_key' => BookHasAuthor::STATUS_ACTIVE,
-        'created_at' => function() {
-            return new \yii\db\Expression('NOW()');
-        },
-        'is_main' => function($model, $relationName, $attributeName, $relatedPk) {
-            return array_search($relatedPk, $model->author_ids) === 0;
-        },
-    ],
+    'updater' => [
+        'viaTableAttributesValue' => [
+            'status_key' => BookHasAuthor::STATUS_ACTIVE,
+            'created_at' => function() {
+                return new \yii\db\Expression('NOW()');
+            },
+            'is_main' => function($model, $relationName, $attributeName, $relatedPk) {
+                return array_search($relatedPk, $model->author_ids) === 0;
+            },
+        ],
+    ]
 ]
 ...
 ```
@@ -163,22 +165,26 @@ You can supply a constant value like so:
 ...
 'review_ids' => [
     'reviews',
-    'default' => 17,
+    'updater' => [
+        'defaultValue' => 17,
+    ]
 ],
 ...
 ```
 
-It is also possible to assign the default value to `NULL` explicitly, like so: `'default' => null`. Another option is to provide a function to calculate the default value:
+It is also possible to assign the default value to `NULL` explicitly, like so: `'defaultValue' => null`. Another option is to provide a function to calculate the default value:
 
 ```php
 ...
 'review_ids' => [
     'reviews',
-    'default' => function($model, $relationName, $attributeName) {
-        //default value calculation
-        //...
-        return $defaultValue;
-    },
+    'updater' => [
+        'defaultValue' => function($model, $relationName, $attributeName) {
+            //default value calculation
+            //...
+            return $defaultValue;
+        },
+    ]
 ],
 ...
 ```
@@ -208,7 +214,7 @@ When you are implementing multiple ManyToMany relations in the same model, and t
 you may face and issue when your junction records will not be saved properly.
 
 This happens because old junction records are dropped each time new relation is saved.
-To avoid deletion of records that were just saved, you will need to set `customDeleteCondition` param.
+To avoid deletion of records that were just saved, you will need to set `viaTableDeleteCondition` param.
 
 This delete condition will be merged with primary delete condition and may be used to fine tune your delete query.
 
@@ -228,21 +234,25 @@ In such case, the resulting "Sample" model will look like this:
                 'relations' => [
                     'rawMaterialPicturesList' => [
                         'rawMaterialPictures',
-                        'viaTableValues' => [
-                            'type_key' => 'RAW_MATERIAL_PICTURES',
-                        ],
-                        'customDeleteCondition' => [
-                            'type_key' => 'RAW_MATERIAL_PICTURES',
-                        ],
+                        'updater' => [
+                            'viaTableAttributesValue' => [
+                                'type_key' => 'RAW_MATERIAL_PICTURES',
+                            ],
+                            'viaTableDeleteCondition' => [
+                                'type_key' => 'RAW_MATERIAL_PICTURES',
+                            ],
+                        ]
                     ],
                     'molecularStructureList' => [
                         'molecularStructure',
-                        'viaTableValues' => [
-                            'type_key' => 'MOLECULAR_STRUCTURE',
-                        ],
-                        'customDeleteCondition' => [
-                            'type_key' => 'MOLECULAR_STRUCTURE',
-                        ],
+                        'updater' => [
+                            'viaTableAttributesValue' => [
+                                'type_key' => 'MOLECULAR_STRUCTURE',
+                            ],
+                            'viaTableDeleteCondition' => [
+                                'type_key' => 'MOLECULAR_STRUCTURE',
+                            ],
+                        ]
                     ],
                 ],
             ],

@@ -8,13 +8,21 @@ use yii\helpers\Json;
 /**
  * Class BookJsonFields
  * @package data
+ *
+ * @property string $review_list_json
+ * @property string $review_list_implode
+ * @property string $author_list_json
+ * @property string $author_list_implode
  */
 class BookJsonFields extends Book
 {
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
-            [
+            'linkerBehavior' => [
                 'class' => LinkerBehavior::className(),
                 'relations' => [
                     'author_list' => [

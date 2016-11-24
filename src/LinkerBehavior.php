@@ -32,14 +32,14 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
      * dirty (changed) attributes and will be saved in saveRelations().
      * @var array
      */
-    private $_values = [];
+    private $values = [];
 
     /**
      * Used to store fields that this behavior creates. Each field refers to a relation
      * and has optional getters and setters.
      * @var array
      */
-    private $_fields = [];
+    private $fields = [];
 
     /**
      * Events list
@@ -60,35 +60,35 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
     {
         parent::init();
 
-        //configure _fields
+        //configure fields
         foreach ($this->relations as $attributeName => $params) {
             //add primary field
-            $this->_fields[$attributeName] = [
+            $this->fields[$attributeName] = [
                 'attribute' => $attributeName,
             ];
             if (isset($params['get'])) {
-                $this->_fields[$attributeName]['get'] = $params['get'];
+                $this->fields[$attributeName]['get'] = $params['get'];
             }
             if (isset($params['set'])) {
-                $this->_fields[$attributeName]['set'] = $params['set'];
+                $this->fields[$attributeName]['set'] = $params['set'];
             }
 
             // Add secondary fields
             if (isset($params['fields'])) {
                 foreach ($params['fields'] as $fieldName => $adjustments) {
                     $fullFieldName = $attributeName . '_' . $fieldName;
-                    if (isset($this->_fields[$fullFieldName])) {
+                    if (isset($this->fields[$fullFieldName])) {
                         throw new ErrorException("Ambiguous field name definition: {$fullFieldName}");
                     }
 
-                    $this->_fields[$fullFieldName] = [
+                    $this->fields[$fullFieldName] = [
                         'attribute' => $attributeName,
                     ];
                     if (isset($adjustments['get'])) {
-                        $this->_fields[$fullFieldName]['get'] = $adjustments['get'];
+                        $this->fields[$fullFieldName]['get'] = $adjustments['get'];
                     }
                     if (isset($adjustments['set'])) {
-                        $this->_fields[$fullFieldName]['set'] = $adjustments['set'];
+                        $this->fields[$fullFieldName]['set'] = $adjustments['set'];
                     }
                 }
             }
@@ -154,7 +154,7 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
      */
     public function hasNewValue($attributeName)
     {
-        return isset($this->_values[$attributeName]);
+        return isset($this->values[$attributeName]);
     }
 
     /**
@@ -164,7 +164,7 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
      */
     public function getNewValue($attributeName)
     {
-        return $this->_values[$attributeName];
+        return $this->values[$attributeName];
     }
 
     /**
@@ -175,11 +175,11 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
      */
     public function getFieldParams($fieldName)
     {
-        if (empty($this->_fields[$fieldName])) {
+        if (empty($this->fields[$fieldName])) {
             throw new ErrorException('Parameter "' . $fieldName . '" does not exist');
         }
 
-        return $this->_fields[$fieldName];
+        return $this->fields[$fieldName];
     }
 
     /**
@@ -238,7 +238,7 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
      */
     public function canGetProperty($name, $checkVars = true)
     {
-        return array_key_exists($name, $this->_fields) ?
+        return array_key_exists($name, $this->fields) ?
             true : parent::canGetProperty($name, $checkVars);
     }
 
@@ -247,7 +247,7 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
      */
     public function canSetProperty($name, $checkVars = true)
     {
-        return array_key_exists($name, $this->_fields) ?
+        return array_key_exists($name, $this->fields) ?
             true : parent::canSetProperty($name, $checkVars = true);
     }
 
@@ -288,9 +288,9 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
         $attributeName = $fieldParams['attribute'];
 
         if (!empty($fieldParams['set'])) {
-            $this->_values[$attributeName] = $this->callUserFunction($fieldParams['set'], $value);
+            $this->values[$attributeName] = $this->callUserFunction($fieldParams['set'], $value);
         } else {
-            $this->_values[$attributeName] = $value;
+            $this->values[$attributeName] = $value;
         }
     }
 }

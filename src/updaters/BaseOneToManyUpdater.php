@@ -13,19 +13,18 @@ abstract class BaseOneToManyUpdater extends BaseUpdater implements OneToManyUpda
     /**
      * @var mixed
      */
-    private $_defaultValue = null;
+    private $defaultValue = null;
 
     /**
      * Set default value for an attribute
      * @param string $value
-     * @return mixed
      */
     public function setDefaultValue($value)
     {
         if (is_callable($value)) {
-            $this->_defaultValue = call_user_func($value, $this);
+            $this->defaultValue = call_user_func($value, $this);
         } else {
-            $this->_defaultValue = $value;
+            $this->defaultValue = $value;
         }
     }
 
@@ -35,11 +34,11 @@ abstract class BaseOneToManyUpdater extends BaseUpdater implements OneToManyUpda
      */
     public function getDefaultValue()
     {
-        return $this->_defaultValue;
+        return $this->defaultValue;
     }
 
     /**
-     * Save relations
+     * Save relation
      */
     abstract public function save();
 }

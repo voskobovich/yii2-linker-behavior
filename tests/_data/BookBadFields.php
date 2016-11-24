@@ -11,10 +11,13 @@ use yii\helpers\Json;
  */
 class BookBadFields extends Book
 {
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
-            [
+            'linkerBehavior' => [
                 'class' => LinkerBehavior::className(),
                 'relations' => [
                     'author' => [
@@ -47,5 +50,4 @@ class BookBadFields extends Book
             ],
         ];
     }
-
 }

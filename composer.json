@@ -31,7 +31,8 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "yiisoft/yii2": "^2"
+        "yiisoft/yii2": "^2",
+        "fxp/composer-asset-plugin": "*"
     },
     "autoload": {
         "psr-4": {

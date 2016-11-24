@@ -5,9 +5,15 @@ namespace data;
 use voskobovich\linker\LinkerBehavior;
 use Yii;
 
+/**
+ * Class BookCustomDefaults
+ * @package data
+ */
 class BookCustomDefaults extends Book
 {
-
+    /**
+     * @inheritdoc
+     */
     public function rules()
     {
         return [
@@ -18,10 +24,13 @@ class BookCustomDefaults extends Book
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
-            [
+            'linkerBehavior' => [
                 'class' => LinkerBehavior::className(),
                 'relations' => [
                     'review_list_none' => [
@@ -29,30 +38,41 @@ class BookCustomDefaults extends Book
                     ],
                     'review_list_null' => [
                         'reviews',
-                        'default' => null,
+                        'updated' => [
+                            'defaultValue' => null,
+                        ]
                     ],
                     'review_list_constant' => [
                         'reviews',
-                        'default' => 7,
+                        'updater' => [
+                            'defaultValue' => 7,
+                        ]
                     ],
                     'review_list_closure' => [
                         'reviews',
-                        'default' => function ($model, $relationName, $attributeName) {
-                            $db = Yii::$app->db;
+                        'updater' => [
+                            'defaultValue' => function ($updater) {
+                                $db = Yii::$app->db;
 
-                            //OR
-                            //$db = $model::getDb();
+                                /**
+                                 * This is Example code.
+                                 *
+                                 * $db = $model::getDb();
+                                 * OR
+                                 * $secondaryModelClass = $model->getRelation($relationName)->modelClass;
+                                 * $db = $secondaryModelClass::getDb();
+                                 */
 
-                            //OR
-                            //$secondaryModelClass = $model->getRelation($relationName)->modelClass;
-                            //$db = $secondaryModelClass::getDb();
+                                $defaultValue = $db
+                                    ->createCommand('SELECT value FROM settings WHERE key="default_review"')
+                                    ->queryScalar();
 
-                            return $db->createCommand('SELECT value FROM settings WHERE key="default_review"')->queryScalar();
-                        },
+                                return $defaultValue;
+                            },
+                        ]
                     ]
                 ]
             ]
         ];
     }
-
 }

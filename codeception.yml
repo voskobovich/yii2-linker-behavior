@@ -14,4 +14,4 @@ modules:
             dsn: 'sqlite:tests/_output/temp.db'
             user: ''
             password: ''
-            dump: tests/_data/dump.sql
+            dump: tests/dump.sql

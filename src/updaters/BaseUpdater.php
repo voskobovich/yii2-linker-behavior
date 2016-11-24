@@ -18,28 +18,27 @@ abstract class BaseUpdater extends Object implements UpdaterInterface
      * Behavior object
      * @var LinkerBehaviorInterface|Behavior
      */
-    private $_behavior;
+    private $behavior;
 
     /**
      * Relation object
      * @var ActiveQuery
      */
-    private $_relation;
+    private $relation;
 
     /**
      * Current attribute name
      * @var string
      */
-    private $_attributeName;
+    private $attributeName;
 
     /**
      * Set behavior object
      * @param LinkerBehaviorInterface $behavior
-     * @return mixed
      */
     public function setBehavior(LinkerBehaviorInterface $behavior)
     {
-        $this->_behavior = $behavior;
+        $this->behavior = $behavior;
     }
 
     /**
@@ -48,7 +47,7 @@ abstract class BaseUpdater extends Object implements UpdaterInterface
      */
     public function getBehavior()
     {
-        return $this->_behavior;
+        return $this->behavior;
     }
 
     /**
@@ -57,7 +56,7 @@ abstract class BaseUpdater extends Object implements UpdaterInterface
      */
     public function setRelation(ActiveQuery $value)
     {
-        $this->_relation = $value;
+        $this->relation = $value;
     }
 
     /**
@@ -66,7 +65,7 @@ abstract class BaseUpdater extends Object implements UpdaterInterface
      */
     public function getRelation()
     {
-        return $this->_relation;
+        return $this->relation;
     }
 
     /**
@@ -75,7 +74,7 @@ abstract class BaseUpdater extends Object implements UpdaterInterface
      */
     public function setAttributeName($value)
     {
-        $this->_attributeName = $value;
+        $this->attributeName = $value;
     }
 
     /**
@@ -84,6 +83,6 @@ abstract class BaseUpdater extends Object implements UpdaterInterface
      */
     public function getAttributeName()
     {
-        return $this->_attributeName;
+        return $this->attributeName;
     }
 }

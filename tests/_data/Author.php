@@ -2,7 +2,7 @@
 
 namespace data;
 
-use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "author".
@@ -10,7 +10,7 @@ use Yii;
  * @property integer $id
  * @property string $name
  */
-class Author extends \yii\db\ActiveRecord
+class Author extends ActiveRecord
 {
     /**
      * @inheritdoc

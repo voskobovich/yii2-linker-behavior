@@ -48,7 +48,7 @@ class ManyToManySmartUpdater extends BaseManyToManyUpdater
                 ->from($viaTableName)
                 ->where(ArrayHelper::merge(
                     [$junctionColumn => $primaryModelPk],
-                    $this->getDeleteCondition()
+                    $this->getViaTableDeleteCondition()
                 ))
                 ->indexBy($relatedColumn)
                 ->asArray()
@@ -66,7 +66,7 @@ class ManyToManySmartUpdater extends BaseManyToManyUpdater
                 // Find untouched relations
                 $untouchedKeys = array_diff($currentKeys, $removedKeys, $addedKeys);
 
-                $viaTableAttributes = $this->getViaTableAttributes();
+                $viaTableAttributes = $this->getViaTableAttributesValue();
                 $viaTableColumns = array_keys($viaTableAttributes);
 
                 $junctionColumns = [$junctionColumn, $relatedColumn];
@@ -99,8 +99,11 @@ class ManyToManySmartUpdater extends BaseManyToManyUpdater
                         // Calculate additional viaTable values
                         $row = [];
                         foreach ($viaTableColumns as $viaTableColumnName) {
-                            $row[$viaTableColumnName] = $this->getViaTableAttributeValue($viaTableColumnName,
-                                $untouchedKey, false);
+                            $row[$viaTableColumnName] = $this->getViaTableAttributeValue(
+                                $viaTableColumnName,
+                                $untouchedKey,
+                                false
+                            );
                         }
 
                         $currentRow = (array)$currentRows[$untouchedKey];
@@ -126,7 +129,7 @@ class ManyToManySmartUpdater extends BaseManyToManyUpdater
                     ->delete($viaTableName, ArrayHelper::merge(
                         [$junctionColumn => $primaryModelPk],
                         [$relatedColumn => $removedKeys],
-                        $this->getDeleteCondition()
+                        $this->getViaTableDeleteCondition()
                     ))
                     ->execute();
             }

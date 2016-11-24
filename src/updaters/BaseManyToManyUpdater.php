@@ -15,75 +15,75 @@ abstract class BaseManyToManyUpdater extends BaseUpdater implements ManyToManyUp
      * List of attributes and values by viaTable
      * @var array
      */
-    private $_viaTableAttributes = [];
+    private $viaTableAttributes = [];
 
     /**
      * Custom condition for remove record from viaTable
      * @var array
      */
-    private $_deleteCondition = [];
+    private $deleteCondition = [];
 
     /**
      * Set additional attributes of viaTable
      * @param $value
      */
-    public function setViaTableAttributes($value)
+    public function setViaTableAttributesValue($value)
     {
         if (!is_array($value)) {
             throw new InvalidParamException('Value must be an array.');
         }
 
-        $this->_viaTableAttributes = $value;
+        $this->viaTableAttributes = $value;
     }
 
     /**
      * Get additional attributes of viaTable
      * @return array
      */
-    public function getViaTableAttributes()
+    public function getViaTableAttributesValue()
     {
-        return $this->_viaTableAttributes;
+        return $this->viaTableAttributes;
     }
 
     /**
      * Get additional value of attribute in viaTable
-     * @param string $viaTableAttributeName
+     * @param string $attributeName
      * @param integer $relatedPk
      * @param bool $isNewRecord
      * @return mixed
      */
-    public function getViaTableAttributeValue($viaTableAttributeName, $relatedPk, $isNewRecord = true)
+    public function getViaTableAttributeValue($attributeName, $relatedPk, $isNewRecord = true)
     {
-        $viaTableAttributes = $this->getViaTableAttributes();
+        $viaTableAttributes = $this->getViaTableAttributesValue();
 
-        if (!isset($viaTableAttributes[$viaTableAttributeName])) {
+        if (!isset($viaTableAttributes[$attributeName])) {
             return null;
         }
 
-        if (is_callable($viaTableAttributes[$viaTableAttributeName])) {
-            $closure = $viaTableAttributes[$viaTableAttributeName];
+        if (is_callable($viaTableAttributes[$attributeName])) {
+            $closure = $viaTableAttributes[$attributeName];
             return call_user_func($closure, $this, $relatedPk, $isNewRecord);
         }
 
-        return $viaTableAttributes[$viaTableAttributeName];
+        return $viaTableAttributes[$attributeName];
     }
 
     /**
      * Set condition used to delete old records from viaTable.
      * @param $value
      */
-    public function setDeleteCondition($value)
+    public function setViaTableDeleteCondition($value)
     {
-        $this->_deleteCondition = $value;
+        $this->deleteCondition = $value;
     }
 
     /**
      * Get condition used to delete old records from viaTable.
      * @return array
      */
-    public function getDeleteCondition()
+    public function getViaTableDeleteCondition()
     {
-        return $this->_deleteCondition;
+        return $this->deleteCondition;
     }
 
     /**

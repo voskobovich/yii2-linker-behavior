@@ -3,6 +3,7 @@
 namespace data;
 
 use voskobovich\linker\LinkerBehavior;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "book".
@@ -10,8 +11,11 @@ use voskobovich\linker\LinkerBehavior;
  * @property integer $id
  * @property string $name
  * @property integer $year
+ *
+ * @property integer[] $review_list
+ * @property integer[] $author_list
  */
-class Book extends \yii\db\ActiveRecord
+class Book extends ActiveRecord
 {
     /**
      * @inheritdoc
@@ -46,21 +50,30 @@ class Book extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getAuthors()
     {
         return $this->hasMany(Author::className(), ['id' => 'book_id'])
             ->viaTable('book_has_author', ['author_id' => 'id']);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getReviews()
     {
         return $this->hasMany(Review::className(), ['book_id' => 'id']);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
-            [
+            'linkerBehavior' => [
                 'class' => LinkerBehavior::className(),
                 'relations' => [
                     'author_list' => ['authors'],
@@ -69,5 +82,4 @@ class Book extends \yii\db\ActiveRecord
             ]
         ];
     }
-
 }

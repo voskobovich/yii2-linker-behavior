@@ -47,7 +47,7 @@ class ManyToManyUpdater extends BaseManyToManyUpdater
             $connection->createCommand()
                 ->delete($junctionTable, ArrayHelper::merge(
                     [$junctionColumn => $primaryModelPk],
-                    $this->getDeleteCondition()
+                    $this->getViaTableDeleteCondition()
                 ))
                 ->execute();
 
@@ -55,7 +55,7 @@ class ManyToManyUpdater extends BaseManyToManyUpdater
             if (!empty($bindingKeys)) {
                 $junctionRows = [];
 
-                $viaTableAttributes = $this->getViaTableAttributes();
+                $viaTableAttributes = $this->getViaTableAttributesValue();
 
                 foreach ($bindingKeys as $relatedPk) {
                     $row = [$primaryModelPk, $relatedPk];
@@ -81,7 +81,7 @@ class ManyToManyUpdater extends BaseManyToManyUpdater
             }
             $transaction->commit();
         } catch (Exception $ex) {
-            $transaction->rollback();
+            $transaction->rollBack();
             throw $ex;
         }
     }
