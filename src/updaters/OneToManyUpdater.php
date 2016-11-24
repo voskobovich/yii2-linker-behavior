@@ -40,7 +40,7 @@ class OneToManyUpdater extends BaseOneToManyUpdater
             $connection->createCommand()
                 ->update(
                     $manyTable,
-                    [$manyTableFkColumn => $this->getDefaultValue()],
+                    [$manyTableFkColumn => $this->getFallbackValue()],
                     [$manyTableFkColumn => $manyTableFkValue])
                 ->execute();
 

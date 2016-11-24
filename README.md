@@ -166,23 +166,23 @@ You can supply a constant value like so:
 'review_ids' => [
     'reviews',
     'updater' => [
-        'defaultValue' => 17,
+        'fallbackValue' => 17,
     ]
 ],
 ...
 ```
 
-It is also possible to assign the default value to `NULL` explicitly, like so: `'defaultValue' => null`. Another option is to provide a function to calculate the default value:
+It is also possible to assign the default value to `NULL` explicitly, like so: `'fallbackValue' => null`. Another option is to provide a function to calculate the default value:
 
 ```php
 ...
 'review_ids' => [
     'reviews',
     'updater' => [
-        'defaultValue' => function($model, $relationName, $attributeName) {
+        'fallbackValue' => function($model, $relationName, $attributeName) {
             //default value calculation
             //...
-            return $defaultValue;
+            return $fallbackValue;
         },
     ]
 ],
@@ -291,7 +291,7 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-php composer.phar require --prefer-dist voskobovich/yii2-linker-behavior "^3.0"
+php composer.phar require --prefer-dist voskobovich/yii2-linker-behavior "^4.0"
 ```
 
 or add

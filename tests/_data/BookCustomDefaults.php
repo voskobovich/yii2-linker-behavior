@@ -39,19 +39,19 @@ class BookCustomDefaults extends Book
                     'review_ids_null' => [
                         'reviews',
                         'updated' => [
-                            'defaultValue' => null,
+                            'fallbackValue' => null,
                         ]
                     ],
                     'review_ids_constant' => [
                         'reviews',
                         'updater' => [
-                            'defaultValue' => 7,
+                            'fallbackValue' => 7,
                         ]
                     ],
                     'review_ids_closure' => [
                         'reviews',
                         'updater' => [
-                            'defaultValue' => function ($updater) {
+                            'fallbackValue' => function ($updater) {
                                 $db = Yii::$app->db;
 
                                 /**
