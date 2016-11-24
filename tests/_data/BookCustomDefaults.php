@@ -17,7 +17,7 @@ class BookCustomDefaults extends Book
     public function rules()
     {
         return [
-            [['review_list_none', 'review_list_null', 'review_list_constant', 'review_list_closure'], 'safe'],
+            [['review_ids_none', 'review_ids_null', 'review_ids_constant', 'review_ids_closure'], 'safe'],
             [['name', 'year'], 'required'],
             [['year'], 'integer'],
             [['name'], 'string', 'max' => 150]
@@ -33,22 +33,22 @@ class BookCustomDefaults extends Book
             'linkerBehavior' => [
                 'class' => LinkerBehavior::className(),
                 'relations' => [
-                    'review_list_none' => [
+                    'review_ids_none' => [
                         'reviews',
                     ],
-                    'review_list_null' => [
+                    'review_ids_null' => [
                         'reviews',
                         'updated' => [
                             'defaultValue' => null,
                         ]
                     ],
-                    'review_list_constant' => [
+                    'review_ids_constant' => [
                         'reviews',
                         'updater' => [
                             'defaultValue' => 7,
                         ]
                     ],
-                    'review_list_closure' => [
+                    'review_ids_closure' => [
                         'reviews',
                         'updater' => [
                             'defaultValue' => function ($updater) {

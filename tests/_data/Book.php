@@ -12,8 +12,8 @@ use yii\db\ActiveRecord;
  * @property string $name
  * @property integer $year
  *
- * @property integer[] $review_list
- * @property integer[] $author_list
+ * @property integer[] $review_ids
+ * @property integer[] $author_ids
  */
 class Book extends ActiveRecord
 {
@@ -31,7 +31,7 @@ class Book extends ActiveRecord
     public function rules()
     {
         return [
-            [['author_list', 'review_list'], 'safe'],
+            [['author_ids', 'review_ids'], 'safe'],
             [['name', 'year'], 'required'],
             [['year'], 'integer'],
             [['name'], 'string', 'max' => 150]
@@ -76,8 +76,8 @@ class Book extends ActiveRecord
             'linkerBehavior' => [
                 'class' => LinkerBehavior::className(),
                 'relations' => [
-                    'author_list' => ['authors'],
-                    'review_list' => ['reviews'],
+                    'author_ids' => ['authors'],
+                    'review_ids' => ['reviews'],
                 ]
             ]
         ];

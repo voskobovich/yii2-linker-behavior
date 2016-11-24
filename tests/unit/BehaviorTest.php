@@ -73,7 +73,7 @@ class BehaviorTest extends TestCase
             5,
             [
                 'Book' => [
-                    'author_list' => [7, 9, 8]
+                    'author_ids' => [7, 9, 8]
                 ]
             ]
         );
@@ -98,7 +98,7 @@ class BehaviorTest extends TestCase
             5,
             [
                 'Book' => [
-                    'author_list' => []
+                    'author_ids' => []
                 ]
             ]
         );
@@ -117,7 +117,7 @@ class BehaviorTest extends TestCase
             3,
             [
                 'Book' => [
-                    'review_list' => [2, 4]
+                    'review_ids' => [2, 4]
                 ]
             ]
         );
@@ -141,7 +141,7 @@ class BehaviorTest extends TestCase
             3,
             [
                 'Book' => [
-                    'review_list' => []
+                    'review_ids' => []
                 ]
             ]
         );
@@ -160,7 +160,7 @@ class BehaviorTest extends TestCase
             5,
             [
                 'BookJson' => [
-                    'author_list' => '[7, 9, 8]'
+                    'author_ids' => '[7, 9, 8]'
                 ]
             ]
         );
@@ -185,7 +185,7 @@ class BehaviorTest extends TestCase
             5,
             [
                 'BookJson' => [
-                    'author_list' => '[]'
+                    'author_ids' => '[]'
                 ]
             ]
         );
@@ -204,7 +204,7 @@ class BehaviorTest extends TestCase
             3,
             [
                 'BookJson' => [
-                    'review_list' => '[2, 4]'
+                    'review_ids' => '[2, 4]'
                 ]
             ]
         );
@@ -228,7 +228,7 @@ class BehaviorTest extends TestCase
             3,
             [
                 'BookJson' => [
-                    'review_list' => '[]'
+                    'review_ids' => '[]'
                 ]
             ]
         );
@@ -245,7 +245,7 @@ class BehaviorTest extends TestCase
 
         //this model is attached to reviews 1, 2 and 3
 
-        $this->assertTrue($model->load(['BookCustomDefaults' => [ 'review_list_none' => [] ]]), 'Load POST data');
+        $this->assertTrue($model->load(['BookCustomDefaults' => ['review_ids_none' => []]]), 'Load POST data');
         $this->assertTrue($model->save(), 'Save model');
 
         $result = Yii::$app->db
@@ -265,7 +265,7 @@ class BehaviorTest extends TestCase
 
         //this model is attached to reviews 1, 2 and 3
 
-        $this->assertTrue($model->load(['BookCustomDefaults' => [ 'review_list_null' => [] ]]), 'Load POST data');
+        $this->assertTrue($model->load(['BookCustomDefaults' => ['review_ids_null' => []]]), 'Load POST data');
         $this->assertTrue($model->save(), 'Save model');
 
         $result = Yii::$app->db
@@ -284,7 +284,7 @@ class BehaviorTest extends TestCase
         $this->assertNotEmpty($model, 'Load model');
 
         //this model is attached to reviews 1, 2 and 3
-        $this->assertTrue($model->load(['BookCustomDefaults' => [ 'review_list_constant' => [] ]]), 'Load POST data');
+        $this->assertTrue($model->load(['BookCustomDefaults' => ['review_ids_constant' => []]]), 'Load POST data');
         $this->assertTrue($model->save(), 'Save model');
 
         $result = Yii::$app->db
@@ -304,7 +304,7 @@ class BehaviorTest extends TestCase
 
         //this model is attached to reviews 1, 2 and 3
 
-        $this->assertTrue($model->load(['BookCustomDefaults' => [ 'review_list_closure' => [] ]]), 'Load POST data');
+        $this->assertTrue($model->load(['BookCustomDefaults' => ['review_ids_closure' => []]]), 'Load POST data');
         $this->assertTrue($model->save(), 'Save model');
 
         $result = Yii::$app->db
@@ -319,41 +319,41 @@ class BehaviorTest extends TestCase
 
     public function testCustomGettersSetters()
     {
-        $reviewList = [1, 2, 4];
-        $reviewListJson = Json::encode($reviewList);
-        $reviewListImplode = implode(',', $reviewList);
+        $reviewIds = [1, 2, 4];
+        $reviewIdsJson = Json::encode($reviewIds);
+        $reviewIdsImplode = implode(',', $reviewIds);
 
-        $authorList = [5, 6];
-        $authorListJson = Json::encode($authorList);
+        $authorIds = [5, 6];
+        $authorIdsJson = Json::encode($authorIds);
 
         //assign and getters
         $model = new BookJsonFields;
-        $model->review_list = $reviewList;
-        $model->author_list = $authorList;
+        $model->review_ids = $reviewIds;
+        $model->author_ids = $authorIds;
 
-        $this->assertEquals($model->review_list, $reviewList, 'Direct getter');
-        $this->assertEquals($model->author_list, $authorList, 'Direct getter');
+        $this->assertEquals($model->review_ids, $reviewIds, 'Direct getter');
+        $this->assertEquals($model->author_ids, $authorIds, 'Direct getter');
 
-        $this->assertEquals($model->author_list_json, $authorListJson, 'JSON getter');
-        $this->assertEquals($model->review_list_json, $reviewListJson, 'JSON getter');
+        $this->assertEquals($model->author_ids_json, $authorIdsJson, 'JSON getter');
+        $this->assertEquals($model->review_ids_json, $reviewIdsJson, 'JSON getter');
 
-        $this->assertEquals($model->review_list_implode, $reviewListImplode, 'Implode getter');
+        $this->assertEquals($model->review_ids_implode, $reviewIdsImplode, 'Implode getter');
 
         //test json setters
         $model = new BookJsonFields;
-        $model->review_list_json = $reviewListJson;
-        $this->assertEquals($model->review_list, $reviewList, 'JSON setter');
-        $model->author_list_json = $authorListJson;
-        $this->assertEquals($model->author_list, $authorList, 'JSON setter');
+        $model->review_ids_json = $reviewIdsJson;
+        $this->assertEquals($model->review_ids, $reviewIds, 'JSON setter');
+        $model->author_ids_json = $authorIdsJson;
+        $this->assertEquals($model->author_ids, $authorIds, 'JSON setter');
 
         //test implode setter for non-existence where appropriate
         $model = new BookJsonFields;
-        $this->assertFalse(isset($model->author_list_implode), 'Non-existence of setter where not declared');
+        $this->assertFalse(isset($model->author_ids_implode), 'Non-existence of setter where not declared');
 
         //test implode setter
         $model = new BookJsonFields;
-        $model->review_list_implode = $reviewListImplode;
-        $this->assertEquals($model->review_list, $reviewList, 'Implode setter');
+        $model->review_ids_implode = $reviewIdsImplode;
+        $this->assertEquals($model->review_ids, $reviewIds, 'Implode setter');
     }
 
     /**

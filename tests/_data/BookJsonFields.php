@@ -9,10 +9,10 @@ use yii\helpers\Json;
  * Class BookJsonFields
  * @package data
  *
- * @property string $review_list_json
- * @property string $review_list_implode
- * @property string $author_list_json
- * @property string $author_list_implode
+ * @property string $review_ids_json
+ * @property string $review_ids_implode
+ * @property string $author_ids_json
+ * @property string $author_ids_implode
  */
 class BookJsonFields extends Book
 {
@@ -25,7 +25,7 @@ class BookJsonFields extends Book
             'linkerBehavior' => [
                 'class' => LinkerBehavior::className(),
                 'relations' => [
-                    'author_list' => [
+                    'author_ids' => [
                         'authors',
                         'fields' => [
                             'json' => [
@@ -38,7 +38,7 @@ class BookJsonFields extends Book
                             ],
                         ],
                     ],
-                    'review_list' => [
+                    'review_ids' => [
                         'reviews',
                         'fields' => [
                             'json' => [

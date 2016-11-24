@@ -20,7 +20,7 @@ class BookJson extends Book
             'linkerBehavior' => [
                 'class' => LinkerBehavior::className(),
                 'relations' => [
-                    'author_list' => [
+                    'author_ids' => [
                         'authors',
                         'get' => function ($value) {
                             return Json::encode($value);
@@ -29,7 +29,7 @@ class BookJson extends Book
                             return Json::decode($value);
                         },
                     ],
-                    'review_list' => [
+                    'review_ids' => [
                         'reviews',
                         'get' => function ($value) {
                             return Json::encode($value);

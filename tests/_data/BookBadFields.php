@@ -23,7 +23,7 @@ class BookBadFields extends Book
                     'author' => [
                         'authors',
                         'fields' => [
-                            'list_json' => [
+                            'ids_json' => [
                                 'get' => function ($value) {
                                     return Json::encode($value);
                                 },
@@ -33,7 +33,7 @@ class BookBadFields extends Book
                             ],
                         ],
                     ],
-                    'author_list' => [
+                    'author_ids' => [
                         'reviews',
                         'fields' => [
                             'json' => [
