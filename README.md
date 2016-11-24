@@ -1,7 +1,7 @@
 Yii2 Linker Behavior
 ========================
 
-Older name **Yii2 ManyToMany Behavior**.
+This is a **NEW** version of a **Yii2 ManyToMany Behavior**.
 
 This behavior makes it easy to maintain many-to-many and one-to-many relations in your ActiveRecord models.
 
