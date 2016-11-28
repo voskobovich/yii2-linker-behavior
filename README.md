@@ -24,7 +24,7 @@ It's the [**Yii2 ManyToMany Behavior**](https://github.com/voskobovich/yii2-many
 Но в целом тесты которые были на [Yii2 ManyToMany Behavior](https://github.com/voskobovich/yii2-many-to-many-behavior) на этой архитектуре **проходят успешно**.  
 Так что уже **можно юзать**.
 
-### Что на счет совместимости?
+### Что на счет совместимости с [Yii2 ManyToMany Behavior](https://github.com/voskobovich/yii2-many-to-many-behavior)?
 Изменились только параметры конфигурирования компонента. Нужно просто внимательно свериться с докой https://github.com/voskobovich/yii2-linker-behavior/blob/master/README.md и все будет хорошо.
 
 ---
