@@ -1,7 +1,7 @@
 Yii2 Linker Behavior
 ========================
 
-This is a **NEW** version of a [**Yii2 ManyToMany Behavior**](https://github.com/voskobovich/yii2-many-to-many-behavior).
+This is a **NEW** version of a [**Yii2 ManyToMany Behavior**](https://github.com/voskobovich/yii2-many-to-many-behavior). 
 It's the [**Yii2 ManyToMany Behavior**](https://github.com/voskobovich/yii2-many-to-many-behavior) only in **new implementation architecture**.
 
 ---
