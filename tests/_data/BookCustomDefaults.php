@@ -52,22 +52,9 @@ class BookCustomDefaults extends Book
                         'reviews',
                         'updater' => [
                             'fallbackValue' => function ($updater) {
-                                $db = Yii::$app->db;
-
-                                /**
-                                 * This is Example code.
-                                 *
-                                 * $db = $model::getDb();
-                                 * OR
-                                 * $secondaryModelClass = $model->getRelation($relationName)->modelClass;
-                                 * $db = $secondaryModelClass::getDb();
-                                 */
-
-                                $defaultValue = $db
+                                return Yii::$app->db
                                     ->createCommand('SELECT value FROM settings WHERE key="default_review"')
                                     ->queryScalar();
-
-                                return $defaultValue;
                             },
                         ]
                     ]
