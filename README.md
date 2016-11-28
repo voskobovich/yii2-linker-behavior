@@ -28,8 +28,13 @@ As an example, let's assume you are dealing with entities like `Book`, `Author` 
 ```php
 public function getAuthors()
 {
-    return $this->hasMany(Author::className(), ['id' => 'author_id'])
-                ->viaTable('{{%book_has_author}}', ['book_id' => 'id']);
+    return $this->hasMany(
+        Author::className(),
+        ['id' => 'author_id']
+    )->viaTable(
+        '{{%book_has_author}}',
+        ['book_id' => 'id']
+    );
 }
 
 public function getReviews()
@@ -261,24 +266,36 @@ In such case, the resulting "Sample" model will look like this:
     
     public function getRawMaterialPictures()
     {
-        return $this->hasMany(Attachment::className(), ['id' => 'related_id'])
-            ->viaTable('sample_attachments', ['current_id' => 'id'], function ($query) {
+        return $this->hasMany(
+            Attachment::className(),
+            ['id' => 'related_id']
+        )->viaTable(
+            'sample_attachments',
+            ['current_id' => 'id'],
+            function ($query) {
                 $query->andWhere([
                     'type_key' => 'RAW_MATERIAL_PICTURES',
                 ]);
                 return $query;
-            });
+            }
+        );
     }
     
     public function getMolecularStructure()
     {
-        return $this->hasMany(Attachment::className(), ['id' => 'related_id'])
-            ->viaTable('sample_attachments', ['current_id' => 'id'], function ($query) {
+        return $this->hasMany(
+            Attachment::className(),
+            ['id' => 'related_id']
+        )->viaTable(
+            'sample_attachments',
+            ['current_id' => 'id'],
+            function ($query) {
                 $query->andWhere([
                     'type_key' => 'MOLECULAR_STRUCTURE',
                 ]);
                 return $query;
-            });
+            }
+        );
     }
     
 ```
@@ -297,7 +314,7 @@ php composer.phar require --prefer-dist voskobovich/yii2-linker-behavior "^4.0"
 or add
 
 ```
-"voskobovich/yii2-linker-behavior": "^3.0"
+"voskobovich/yii2-linker-behavior": "^4.0"
 ```
 
 to the require section of your `composer.json` file.

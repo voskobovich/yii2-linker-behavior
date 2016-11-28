@@ -38,7 +38,7 @@ class BookCustomDefaults extends Book
                     ],
                     'review_ids_null' => [
                         'reviews',
-                        'updated' => [
+                        'updater' => [
                             'fallbackValue' => null,
                         ]
                     ],
