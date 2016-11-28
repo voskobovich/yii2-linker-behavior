@@ -1,7 +1,7 @@
 Yii2 Linker Behavior
 ========================
 
-This is a **NEW** version of a [**Yii2 ManyToMany Behavior**](https://github.com/voskobovich/yii2-many-to-many-behavior). 
+This is a **NEW** version of a [**Yii2 ManyToMany Behavior**](https://github.com/voskobovich/yii2-many-to-many-behavior).  
 It's the [**Yii2 ManyToMany Behavior**](https://github.com/voskobovich/yii2-many-to-many-behavior) only in **new implementation architecture**.
 
 ---
@@ -9,7 +9,7 @@ It's the [**Yii2 ManyToMany Behavior**](https://github.com/voskobovich/yii2-many
 ### Что это?
 Это копия [**Yii2 ManyToMany Behavior**](https://github.com/voskobovich/yii2-many-to-many-behavior) но с другой архитектурой. 
 
-В [Yii2 ManyToMany Behavior](https://github.com/voskobovich/yii2-many-to-many-behavior) некоторые жаловались, что у сохранения много-ко-многим одна логика и она не всем подходит. 
+В [Yii2 ManyToMany Behavior](https://github.com/voskobovich/yii2-many-to-many-behavior) некоторые жаловались, что у сохранения много-ко-многим одна логика и она не всем подходит.  
 Я сделал так, что **логику** обновления связей **можно конфигурировать** без перепилки кода. 
 
 В стандартной сборке реализовано три класса логики (апдейтера):
@@ -18,10 +18,12 @@ It's the [**Yii2 ManyToMany Behavior**](https://github.com/voskobovich/yii2-many
 * **ManyToManySmartUpdater.php** - находит разницу и вносит корректировки в связи. Он управляется уже за 4 запроса но при этом не убивает существующие связи.
 * **OneToManyUpdater.php** - стандартная логика работы со связью один-ко-многим.
 
-Все это позволяет разработчикам писать свою логику обновления связей с **блекджеком и девочками** для своих проектов. 
+Все это позволяет разработчикам писать свою логику обновления связей с **блекджеком и девочками** для своих проектов.  
 В репо есть интерфейсы, абстрактные классы и все, что нужно для расширения. 
 
-Сейчас проект в стадии RC и на новый функционал нужно допилить тестов. Но в целом тесты которые были на [Yii2 ManyToMany Behavior](https://github.com/voskobovich/yii2-many-to-many-behavior) здесь проходят. Так что можно уже юзать.
+Сейчас проект в стадии RC и на новый функционал нужно допилить тестов.  
+Но в целом тесты которые были на [Yii2 ManyToMany Behavior](https://github.com/voskobovich/yii2-many-to-many-behavior) на этой архитектуре **проходят успешно**.  
+Так что уже **можно юзать**.
 
 ### Что на счет совместимости?
 Изменились только параметры конфигурирования компонента. Нужно просто внимательно свериться с докой https://github.com/voskobovich/yii2-linker-behavior/blob/master/README.md и все будет хорошо.
