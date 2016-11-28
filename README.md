@@ -4,6 +4,30 @@ Yii2 Linker Behavior
 This is a **NEW** version of a [**Yii2 ManyToMany Behavior**](https://github.com/voskobovich/yii2-many-to-many-behavior).
 It's the [**Yii2 ManyToMany Behavior**](https://github.com/voskobovich/yii2-many-to-many-behavior) only in **new implementation architecture**.
 
+---
+
+### Что это?
+Это копия [**Yii2 ManyToMany Behavior**](https://github.com/voskobovich/yii2-many-to-many-behavior) но с другой архитектурой. 
+
+В [Yii2 ManyToMany Behavior](https://github.com/voskobovich/yii2-many-to-many-behavior) некоторые жаловались, что у сохранения много-ко-многим одна логика и она не всем подходит. 
+Я сделал так, что **логику** обновления связей **можно конфигурировать** без перепилки кода. 
+
+В стандартной сборке реализовано три класса логики (апдейтера):
+
+* **ManyToManyUpdater.php** - удаляет все связи и перезаписывает их заново. Его преимущество в том, что обновление происходит за 2 быстрых запроса в БД.
+* **ManyToManySmartUpdater.php** - находит разницу и вносит корректировки в связи. Он управляется уже за 4 запроса но при этом не убивает существующие связи.
+* **OneToManyUpdater.php** - стандартная логика работы со связью один-ко-многим.
+
+Все это позволяет разработчикам писать свою логику обновления связей с **блекджеком и девочками** для своих проектов. 
+В репо есть интерфейсы, абстрактные классы и все, что нужно для расширения. 
+
+Сейчас проект в стадии RC и на новый функционал нужно допилить тестов. Но в целом тесты которые были на [Yii2 ManyToMany Behavior](https://github.com/voskobovich/yii2-many-to-many-behavior) здесь проходят. Так что можно уже юзать.
+
+### Что на счет совместимости?
+Изменились только параметры конфигурирования компонента. Нужно просто внимательно свериться с докой https://github.com/voskobovich/yii2-linker-behavior/blob/master/README.md и все будет хорошо.
+
+---
+
 This behavior makes it easy to maintain many-to-many and one-to-many relations in your ActiveRecord models.
 
 [![License](https://poser.pugx.org/voskobovich/yii2-linker-behavior/license.svg)](https://packagist.org/packages/voskobovich/yii2-linker-behavior)
