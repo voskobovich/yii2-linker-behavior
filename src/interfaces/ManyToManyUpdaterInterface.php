@@ -30,14 +30,14 @@ interface ManyToManyUpdaterInterface extends UpdaterInterface
     public function getViaTableAttributeValue($attributeName, $relatedPk, $isNewRecord = true);
 
     /**
-     * Set condition used to delete old records from viaTable.
+     * Set condition used to processed old records from viaTable.
      * @param $value
      */
-    public function setViaTableDeleteCondition($value);
+    public function setViaTableCondition($value);
 
     /**
-     * Get condition used to delete old records from viaTable.
+     * Get condition used to processed old records from viaTable.
      * @return array
      */
-    public function getViaTableDeleteCondition();
+    public function getViaTableCondition();
 }

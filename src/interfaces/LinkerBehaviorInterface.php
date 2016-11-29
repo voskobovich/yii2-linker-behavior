@@ -9,26 +9,18 @@ namespace voskobovich\linker\interfaces;
 interface LinkerBehaviorInterface
 {
     /**
-     * Call user function
-     * @param $function
-     * @param $value
-     * @return mixed
-     */
-    public function callUserFunction($function, $value);
-
-    /**
      * Check if an attribute is dirty and must be saved (its new value exists)
      * @param string $attributeName
      * @return null
      */
-    public function hasNewValue($attributeName);
+    public function hasDirtyValueOfAttribute($attributeName);
 
     /**
      * Get value of a dirty attribute by name
      * @param string $attributeName
      * @return null
      */
-    public function getNewValue($attributeName);
+    public function getDirtyValueOfAttribute($attributeName);
 
     /**
      * Get parameters of a field

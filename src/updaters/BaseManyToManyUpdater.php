@@ -18,10 +18,10 @@ abstract class BaseManyToManyUpdater extends BaseUpdater implements ManyToManyUp
     private $viaTableAttributes = [];
 
     /**
-     * Custom condition for remove record from viaTable
+     * Condition used to process old records from viaTable.
      * @var array
      */
-    private $deleteCondition = [];
+    private $viaTableCondition = [];
 
     /**
      * Set additional attributes of viaTable
@@ -56,34 +56,38 @@ abstract class BaseManyToManyUpdater extends BaseUpdater implements ManyToManyUp
     {
         $viaTableAttributes = $this->getViaTableAttributesValue();
 
-        if (!isset($viaTableAttributes[$attributeName])) {
+        if (!array_key_exists($attributeName, $viaTableAttributes)) {
             return null;
         }
 
         if (is_callable($viaTableAttributes[$attributeName])) {
-            $closure = $viaTableAttributes[$attributeName];
-            return call_user_func($closure, $this, $relatedPk, $isNewRecord);
+            return call_user_func(
+                $viaTableAttributes[$attributeName],
+                $this,
+                $relatedPk,
+                $isNewRecord
+            );
         }
 
         return $viaTableAttributes[$attributeName];
     }
 
     /**
-     * Set condition used to delete old records from viaTable.
+     * Set condition used to process old records from viaTable.
      * @param $value
      */
-    public function setViaTableDeleteCondition($value)
+    public function setViaTableCondition($value)
     {
-        $this->deleteCondition = $value;
+        $this->viaTableCondition = $value;
     }
 
     /**
-     * Get condition used to delete old records from viaTable.
+     * Get condition used to process old records from viaTable.
      * @return array
      */
-    public function getViaTableDeleteCondition()
+    public function getViaTableCondition()
     {
-        return $this->deleteCondition;
+        return $this->viaTableCondition;
     }
 
     /**

@@ -23,9 +23,10 @@ abstract class BaseOneToManyUpdater extends BaseUpdater implements OneToManyUpda
     {
         if (is_callable($value)) {
             $this->fallbackValue = call_user_func($value, $this);
-        } else {
-            $this->fallbackValue = $value;
+            return;
         }
+
+        $this->fallbackValue = $value;
     }
 
     /**

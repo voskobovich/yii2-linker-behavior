@@ -20,35 +20,41 @@ class ManyToManyUpdater extends BaseManyToManyUpdater
     {
         /** @var ActiveRecord $primaryModel */
         $primaryModel = $this->getBehavior()->owner;
-        $primaryModelPk = $primaryModel->getPrimaryKey();
+        $primaryModelPkValue = $primaryModel->getPrimaryKey();
+        $attributeName = $this->getAttributeName();
+        $relation = $this->getRelation();
 
-        $bindingKeys = $this->getBehavior()->getNewValue($this->getAttributeName());
+        $bindingKeys = $this->getBehavior()
+            ->getDirtyValueOfAttribute($attributeName);
 
         // Assuming junction column is visible from the primary model connection
-        if (is_array($this->getRelation()->via)) {
+        if (is_array($relation->via)) {
             // via()
-            $via = $this->getRelation()->via[1];
+            $via = $relation->via[1];
             /** @var ActiveRecord $junctionModelClass */
             $junctionModelClass = $via->modelClass;
-            $junctionTable = $junctionModelClass::tableName();
-            list($junctionColumn) = array_keys($via->link);
+            $junctionTableName = $junctionModelClass::tableName();
+            list($junctionColumnName) = array_keys($via->link);
         } else {
             // viaTable()
-            list($junctionTable) = array_values($this->getRelation()->via->from);
-            list($junctionColumn) = array_keys($this->getRelation()->via->link);
+            list($junctionTableName) = array_values($relation->via->from);
+            list($junctionColumnName) = array_keys($relation->via->link);
         }
 
-        list($relatedColumn) = array_values($this->getRelation()->link);
+        list($relatedColumnName) = array_values($relation->link);
 
-        $connection = $primaryModel::getDb();
-        $transaction = $connection->beginTransaction();
+        $dbConnection = $primaryModel::getDb();
+        $transaction = $dbConnection->beginTransaction();
         try {
             // Remove old relations
-            $connection->createCommand()
-                ->delete($junctionTable, ArrayHelper::merge(
-                    [$junctionColumn => $primaryModelPk],
-                    $this->getViaTableDeleteCondition()
-                ))
+            $dbConnection->createCommand()
+                ->delete(
+                    $junctionTableName,
+                    ArrayHelper::merge(
+                        [$junctionColumnName => $primaryModelPkValue],
+                        $this->getViaTableCondition()
+                    )
+                )
                 ->execute();
 
             // Write new relations
@@ -56,27 +62,32 @@ class ManyToManyUpdater extends BaseManyToManyUpdater
                 $junctionRows = [];
 
                 $viaTableAttributes = $this->getViaTableAttributesValue();
+                $viaTableColumnNames = array_keys($viaTableAttributes);
 
-                foreach ($bindingKeys as $relatedPk) {
-                    $row = [$primaryModelPk, $relatedPk];
+                foreach ($bindingKeys as $relatedPkValue) {
+                    $row = [$primaryModelPkValue, $relatedPkValue];
 
                     // Calculate additional viaTable values
-                    foreach (array_keys($viaTableAttributes) as $viaTableColumnName) {
-                        $row[] = $this->getViaTableAttributeValue($viaTableColumnName, $relatedPk);
+                    foreach ($viaTableColumnNames as $viaTableColumnName) {
+                        $row[] = $this->getViaTableAttributeValue($viaTableColumnName, $relatedPkValue);
                     }
 
                     array_push($junctionRows, $row);
                 }
 
-                $cols = [$junctionColumn, $relatedColumn];
+                $junctionTableColumnNames = [$junctionColumnName, $relatedColumnName];
 
                 // Additional viaTable columns
-                foreach (array_keys($viaTableAttributes) as $viaTableColumnName) {
-                    $cols[] = $viaTableColumnName;
+                foreach ($viaTableColumnNames as $viaTableColumnName) {
+                    $junctionTableColumnNames[] = $viaTableColumnName;
                 }
 
-                $connection->createCommand()
-                    ->batchInsert($junctionTable, $cols, $junctionRows)
+                $dbConnection->createCommand()
+                    ->batchInsert(
+                        $junctionTableName,
+                        $junctionTableColumnNames,
+                        $junctionRows
+                    )
                     ->execute();
             }
             $transaction->commit();

@@ -22,7 +22,25 @@ use yii\base\ErrorException;
 class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
 {
     /**
-     * Stores a list of relations, affected by the behavior. Configurable property.
+     * Stores a list of Relations configured in the Behavior in the Model.
+     * Configurable property.
+     *
+     * Example 1:
+     * ```
+     * 'relations' => [
+     *     'author_ids' => 'authors',
+     * ]
+     * ```
+     *
+     * Example 2:
+     * ```
+     * 'relations' => [
+     *     'reviews',
+     *     'updater' => [
+     *         'fallbackValue' => 17,
+     *     ]
+     * ]
+     * ```
      * @var array
      */
     public $relations = [];
@@ -30,16 +48,38 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
     /**
      * Stores values of relation attributes. All entries in this array are considered
      * dirty (changed) attributes and will be saved in saveRelations().
+     *
+     * Example array structure:
+     * [
+     *     'author_ids' => [1,78,9]
+     * ]
+     *
      * @var array
      */
-    private $values = [];
+    private $dirtyValueOfAttributes = [];
 
     /**
-     * Used to store fields that this behavior creates. Each field refers to a relation
-     * and has optional getters and setters.
+     * Used to store fields that this behavior creates.
+     * Each field refers to a relation and has optional getters and setters.
+     *
+     * Example array structure:
+     * [
+     *     'author_ids' = [
+     *         'attribute' => 'author_ids'
+     *     ],
+     *     'author_ids_json' = [
+     *         'attribute' => 'author_ids',
+     *         'get' => {callable function}
+     *     ],
+     *     'relation_ids' = [
+     *         'attribute' => 'relation_ids',
+     *         'set' => {callable function}
+     *     ],
+     * ]
+     *
      * @var array
      */
-    private $fields = [];
+    private $dynamicFieldsOfModel = [];
 
     /**
      * Events list
@@ -54,41 +94,41 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
     }
 
     /**
-     * Invokes init of parent class and assigns proper values to internal _fields variable
+     * Invokes init of parent class and assigns proper values to internal fields variable
      */
     public function init()
     {
         parent::init();
 
-        //configure fields
-        foreach ($this->relations as $attributeName => $params) {
-            //add primary field
-            $this->fields[$attributeName] = [
-                'attribute' => $attributeName,
+        // Configure dynamicFieldsOfModel
+        foreach ($this->relations as $dynamicAttributeName => $dynamicAttributeParams) {
+            // Add primary field
+            $this->dynamicFieldsOfModel[$dynamicAttributeName] = [
+                'attribute' => $dynamicAttributeName,
             ];
-            if (isset($params['get'])) {
-                $this->fields[$attributeName]['get'] = $params['get'];
+            if (isset($dynamicAttributeParams['get'])) {
+                $this->dynamicFieldsOfModel[$dynamicAttributeName]['get'] = $dynamicAttributeParams['get'];
             }
-            if (isset($params['set'])) {
-                $this->fields[$attributeName]['set'] = $params['set'];
+            if (isset($dynamicAttributeParams['set'])) {
+                $this->dynamicFieldsOfModel[$dynamicAttributeName]['set'] = $dynamicAttributeParams['set'];
             }
 
-            // Add secondary fields
-            if (isset($params['fields'])) {
-                foreach ($params['fields'] as $fieldName => $adjustments) {
-                    $fullFieldName = $attributeName . '_' . $fieldName;
-                    if (isset($this->fields[$fullFieldName])) {
+            // Add secondary fields of primary field
+            if (isset($dynamicAttributeParams['fields'])) {
+                foreach ($dynamicAttributeParams['fields'] as $fieldName => $adjustments) {
+                    $fullFieldName = $dynamicAttributeName . '_' . $fieldName;
+                    if (isset($this->dynamicFieldsOfModel[$fullFieldName])) {
                         throw new ErrorException("Ambiguous field name definition: {$fullFieldName}");
                     }
 
-                    $this->fields[$fullFieldName] = [
-                        'attribute' => $attributeName,
+                    $this->dynamicFieldsOfModel[$fullFieldName] = [
+                        'attribute' => $dynamicAttributeName,
                     ];
                     if (isset($adjustments['get'])) {
-                        $this->fields[$fullFieldName]['get'] = $adjustments['get'];
+                        $this->dynamicFieldsOfModel[$fullFieldName]['get'] = $adjustments['get'];
                     }
                     if (isset($adjustments['set'])) {
-                        $this->fields[$fullFieldName]['set'] = $adjustments['set'];
+                        $this->dynamicFieldsOfModel[$fullFieldName]['set'] = $adjustments['set'];
                     }
                 }
             }
@@ -96,53 +136,58 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
     }
 
     /**
-     * Save all dirty (changed) relation values ($this->_values) to the database
+     * Save all dirty (changed) relation values ($this->dirtyValueOfAttributes) to the database
      * @throws ErrorException
      */
     public function saveRelations()
     {
         /** @var ActiveRecord $primaryModel */
         $primaryModel = $this->owner;
+        $primaryModelPk = $primaryModel->getPrimaryKey();
 
-        if (is_array($primaryModelPk = $primaryModel->getPrimaryKey())) {
+        if (is_array($primaryModelPk)) {
             throw new ErrorException('This behavior does not support composite primary keys');
         }
 
-        foreach ($this->relations as $attributeName => $params) {
-            $relationName = $this->getRelationName($attributeName);
+        foreach ($this->relations as $dynamicAttributeName => $dynamicAttributeParams) {
+            $relationName = $this->getRelationName($dynamicAttributeName);
             $relation = $primaryModel->getRelation($relationName);
 
-            if (!$this->hasNewValue($attributeName)) {
+            if (!$this->hasDirtyValueOfAttribute($dynamicAttributeName)) {
                 continue;
             }
 
             if (!empty($relation->via) && $relation->multiple) {
                 // Many-to-many
-                if (empty($params['updater']['class'])) {
-                    $params['updater']['class'] = ManyToManyUpdater::className();
+                if (empty($dynamicAttributeParams['updater']['class'])) {
+                    $dynamicAttributeParams['updater']['class'] = ManyToManyUpdater::className();
                 }
 
-                $updater = Yii::createObject($params['updater']);
+                $updater = Yii::createObject($dynamicAttributeParams['updater']);
                 if (!$updater instanceof ManyToManyUpdaterInterface) {
-                    throw new InvalidConfigException('Updater class must implement the interface "voskobovich\linker\interfaces\ManyToManyUpdaterInterface"');
+                    throw new InvalidConfigException(
+                        'Updater class must implement the interface "' . ManyToManyUpdaterInterface::class . '"'
+                    );
                 }
             } elseif (!empty($relation->link) && $relation->multiple) {
                 // One-to-many on the many side
-                if (empty($params['updater']['class'])) {
-                    $params['updater']['class'] = OneToManyUpdater::className();
+                if (empty($dynamicAttributeParams['updater']['class'])) {
+                    $dynamicAttributeParams['updater']['class'] = OneToManyUpdater::className();
                 }
 
-                $updater = Yii::createObject($params['updater']);
+                $updater = Yii::createObject($dynamicAttributeParams['updater']);
                 if (!$updater instanceof OneToManyUpdaterInterface) {
-                    throw new InvalidConfigException('Updater class must implement the interface "voskobovich\linker\interfaces\OneToManyUpdaterInterface"');
+                    throw new InvalidConfigException(
+                        'Updater class must implement the interface "' . OneToManyUpdaterInterface::class . '"'
+                    );
                 }
             } else {
-                throw new ErrorException('Relationship type not supported.');
+                throw new ErrorException('Relationship type is not supported.');
             }
 
             $updater->setBehavior($this);
             $updater->setRelation($relation);
-            $updater->setAttributeName($attributeName);
+            $updater->setAttributeName($dynamicAttributeName);
             $updater->save();
         }
     }
@@ -152,9 +197,9 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
      * @param string $attributeName
      * @return null
      */
-    public function hasNewValue($attributeName)
+    public function hasDirtyValueOfAttribute($attributeName)
     {
-        return isset($this->values[$attributeName]);
+        return isset($this->dirtyValueOfAttributes[$attributeName]);
     }
 
     /**
@@ -162,9 +207,9 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
      * @param string $attributeName
      * @return null
      */
-    public function getNewValue($attributeName)
+    public function getDirtyValueOfAttribute($attributeName)
     {
-        return $this->values[$attributeName];
+        return $this->dirtyValueOfAttributes[$attributeName];
     }
 
     /**
@@ -175,11 +220,11 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
      */
     public function getFieldParams($fieldName)
     {
-        if (empty($this->fields[$fieldName])) {
+        if (!array_key_exists($fieldName, $this->dynamicFieldsOfModel)) {
             throw new ErrorException('Parameter "' . $fieldName . '" does not exist');
         }
 
-        return $this->fields[$fieldName];
+        return $this->dynamicFieldsOfModel[$fieldName];
     }
 
     /**
@@ -190,7 +235,7 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
      */
     public function getRelationParams($attributeName)
     {
-        if (empty($this->relations[$attributeName])) {
+        if (!array_key_exists($attributeName, $this->relations)) {
             throw new ErrorException('Parameter "' . $attributeName . '" does not exist.');
         }
 
@@ -218,28 +263,13 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
     }
 
     /**
-     * Call user function
-     * @param $function
-     * @param $value
-     * @return mixed
-     * @throws ErrorException
-     */
-    public function callUserFunction($function, $value)
-    {
-        if (!is_array($function) && !is_callable($function)) {
-            throw new ErrorException('This value is not a function');
-        }
-
-        return call_user_func($function, $value);
-    }
-
-    /**
      * @inheritdoc
      */
     public function canGetProperty($name, $checkVars = true)
     {
-        return array_key_exists($name, $this->fields) ?
-            true : parent::canGetProperty($name, $checkVars);
+        return array_key_exists($name, $this->dynamicFieldsOfModel)
+            ? true
+            : parent::canGetProperty($name, $checkVars);
     }
 
     /**
@@ -247,8 +277,9 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
      */
     public function canSetProperty($name, $checkVars = true)
     {
-        return array_key_exists($name, $this->fields) ?
-            true : parent::canSetProperty($name, $checkVars = true);
+        return array_key_exists($name, $this->dynamicFieldsOfModel)
+            ? true
+            : parent::canSetProperty($name, $checkVars = true);
     }
 
     /**
@@ -260,8 +291,8 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
         $attributeName = $fieldParams['attribute'];
         $relationName = $this->getRelationName($attributeName);
 
-        if ($this->hasNewValue($attributeName)) {
-            $value = $this->getNewValue($attributeName);
+        if ($this->hasDirtyValueOfAttribute($attributeName)) {
+            $value = $this->getDirtyValueOfAttribute($attributeName);
         } else {
             /** @var ActiveRecord $owner */
             $owner = $this->owner;
@@ -276,7 +307,7 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
             return $value;
         }
 
-        return $this->callUserFunction($fieldParams['get'], $value);
+        return call_user_func($fieldParams['get'], $value);
     }
 
     /**
@@ -288,9 +319,10 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
         $attributeName = $fieldParams['attribute'];
 
         if (!empty($fieldParams['set'])) {
-            $this->values[$attributeName] = $this->callUserFunction($fieldParams['set'], $value);
-        } else {
-            $this->values[$attributeName] = $value;
+            $this->dirtyValueOfAttributes[$attributeName] = call_user_func($fieldParams['set'], $value);
+            return;
         }
+
+        $this->dirtyValueOfAttributes[$attributeName] = $value;
     }
 }

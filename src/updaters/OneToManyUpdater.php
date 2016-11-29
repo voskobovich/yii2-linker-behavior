@@ -19,38 +19,43 @@ class OneToManyUpdater extends BaseOneToManyUpdater
     {
         /** @var ActiveRecord $primaryModel */
         $primaryModel = $this->getBehavior()->owner;
-        $primaryModelPk = $primaryModel->getPrimaryKey();
+        $primaryModelPkValue = $primaryModel->getPrimaryKey();
+        $relation = $this->getRelation();
+        $attributeName = $this->getAttributeName();
 
-        $bindingKeys = $this->getBehavior()->getNewValue($this->getAttributeName());
+        $bindingKeys = $this->getBehavior()
+            ->getDirtyValueOfAttribute($attributeName);
 
         // HasMany, primary model HAS MANY foreign models, must update foreign model table
         /** @var ActiveRecord $foreignModel */
-        $foreignModel = Yii::createObject($this->getRelation()->modelClass);
-        $manyTable = $foreignModel->tableName();
+        $foreignModel = Yii::createObject($relation->modelClass);
+        $manyTableName = $foreignModel->tableName();
 
-        list($manyTableFkColumn) = array_keys($this->getRelation()->link);
-        $manyTableFkValue = $primaryModelPk;
-        list($manyTablePkColumn) = ($foreignModel->primaryKey());
+        list($manyTableFkColumnName) = array_keys($relation->link);
+        $manyTableFkValue = $primaryModelPkValue;
+        list($manyTablePkColumnName) = ($foreignModel->primaryKey());
 
-        $connection = $foreignModel::getDb();
-        $transaction = $connection->beginTransaction();
+        $dbConnection = $foreignModel::getDb();
+        $transaction = $dbConnection->beginTransaction();
 
         try {
             // Remove old relations
-            $connection->createCommand()
+            $dbConnection->createCommand()
                 ->update(
-                    $manyTable,
-                    [$manyTableFkColumn => $this->getFallbackValue()],
-                    [$manyTableFkColumn => $manyTableFkValue])
+                    $manyTableName,
+                    [$manyTableFkColumnName => $this->getFallbackValue()],
+                    [$manyTableFkColumnName => $manyTableFkValue]
+                )
                 ->execute();
 
             // Write new relations
             if (!empty($bindingKeys)) {
-                $connection->createCommand()
+                $dbConnection->createCommand()
                     ->update(
-                        $manyTable,
-                        [$manyTableFkColumn => $manyTableFkValue],
-                        ['in', $manyTablePkColumn, $bindingKeys])
+                        $manyTableName,
+                        [$manyTableFkColumnName => $manyTableFkValue],
+                        ['in', $manyTablePkColumnName, $bindingKeys]
+                    )
                     ->execute();
             }
             $transaction->commit();
