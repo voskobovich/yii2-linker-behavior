@@ -246,7 +246,7 @@ When you are implementing multiple ManyToMany relations in the same model, and t
 you may face and issue when your junction records will not be saved properly.
 
 This happens because old junction records are dropped each time new relation is saved.
-To avoid deletion of records that were just saved, you will need to set `viaTableDeleteCondition` param.
+To avoid deletion of records that were just saved, you will need to set `viaTableCondition` param.
 
 This delete condition will be merged with primary delete condition and may be used to fine tune your delete query.
 
@@ -270,7 +270,7 @@ In such case, the resulting "Sample" model will look like this:
                             'viaTableAttributesValue' => [
                                 'type_key' => 'RAW_MATERIAL_PICTURES',
                             ],
-                            'viaTableDeleteCondition' => [
+                            'viaTableCondition' => [
                                 'type_key' => 'RAW_MATERIAL_PICTURES',
                             ],
                         ]
@@ -281,7 +281,7 @@ In such case, the resulting "Sample" model will look like this:
                             'viaTableAttributesValue' => [
                                 'type_key' => 'MOLECULAR_STRUCTURE',
                             ],
-                            'viaTableDeleteCondition' => [
+                            'viaTableCondition' => [
                                 'type_key' => 'MOLECULAR_STRUCTURE',
                             ],
                         ]
