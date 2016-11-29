@@ -166,7 +166,8 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
                 $updater = Yii::createObject($dynamicAttributeParams['updater']);
                 if (!$updater instanceof ManyToManyUpdaterInterface) {
                     throw new InvalidConfigException(
-                        'Updater class must implement the interface "' . ManyToManyUpdaterInterface::class . '"'
+                        'Updater class must implement ' .
+                        'the interface "voskobovich\linker\interfaces\ManyToManyUpdaterInterface"'
                     );
                 }
             } elseif (!empty($relation->link) && $relation->multiple) {
@@ -178,7 +179,8 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
                 $updater = Yii::createObject($dynamicAttributeParams['updater']);
                 if (!$updater instanceof OneToManyUpdaterInterface) {
                     throw new InvalidConfigException(
-                        'Updater class must implement the interface "' . OneToManyUpdaterInterface::class . '"'
+                        'Updater class must implement ' .
+                        'the interface "voskobovich\linker\interfaces\OneToManyUpdaterInterface"'
                     );
                 }
             } else {
