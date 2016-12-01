@@ -1,4 +1,4 @@
-Yii2 Many-to-Many Behavior is free software. It is released under
+Yii2 Linker Behavior is free software. It is released under
 the terms of the following BSD License.
 
 Copyright © 2014 by Vitaly Voskobovich
