@@ -76,8 +76,8 @@ class Book extends ActiveRecord
             'linkerBehavior' => [
                 'class' => LinkerBehavior::className(),
                 'relations' => [
-                    'author_ids' => ['authors'],
-                    'review_ids' => ['reviews'],
+                    'author_ids' => 'authors',
+                    'review_ids' => 'reviews',
                 ]
             ]
         ];

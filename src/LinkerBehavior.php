@@ -82,6 +82,31 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
     private $dynamicFieldsOfModel = [];
 
     /**
+     * Build updater instance
+     * @param $relationConfig
+     * @param $defaultUpdaterClass
+     * @return object
+     */
+    private function buildUpdater($relationConfig, $defaultUpdaterClass)
+    {
+        if (!is_array($relationConfig)) {
+            $relationConfig = [$relationConfig];
+        }
+
+        if (empty($relationConfig['updater']['class'])) {
+            if (!empty($relationConfig['updater'])) {
+                $relationConfig['updater']['class'] = $defaultUpdaterClass;
+            } else {
+                $relationConfig['updater'] = [
+                    'class' => $defaultUpdaterClass
+                ];
+            }
+        }
+
+        return Yii::createObject($relationConfig['updater']);
+    }
+
+    /**
      * Events list
      * @return array
      */
@@ -159,11 +184,8 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
 
             if (!empty($relation->via) && $relation->multiple) {
                 // Many-to-many
-                if (empty($dynamicAttributeParams['updater']['class'])) {
-                    $dynamicAttributeParams['updater']['class'] = ManyToManyUpdater::className();
-                }
 
-                $updater = Yii::createObject($dynamicAttributeParams['updater']);
+                $updater = $this->buildUpdater($dynamicAttributeParams, ManyToManyUpdater::className());
                 if (!$updater instanceof ManyToManyUpdaterInterface) {
                     throw new InvalidConfigException(
                         'Updater class must implement ' .
@@ -172,11 +194,8 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
                 }
             } elseif (!empty($relation->link) && $relation->multiple) {
                 // One-to-many on the many side
-                if (empty($dynamicAttributeParams['updater']['class'])) {
-                    $dynamicAttributeParams['updater']['class'] = OneToManyUpdater::className();
-                }
 
-                $updater = Yii::createObject($dynamicAttributeParams['updater']);
+                $updater = $this->buildUpdater($dynamicAttributeParams, OneToManyUpdater::className());
                 if (!$updater instanceof OneToManyUpdaterInterface) {
                     throw new InvalidConfigException(
                         'Updater class must implement ' .
