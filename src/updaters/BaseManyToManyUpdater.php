@@ -50,14 +50,15 @@ abstract class BaseManyToManyUpdater extends BaseUpdater implements ManyToManyUp
      * @param string $attributeName
      * @param integer $relatedPk
      * @param bool $isNewRecord
+     * @param mixed|null $oldValue
      * @return mixed
      */
-    public function getViaTableAttributeValue($attributeName, $relatedPk, $isNewRecord = true)
+    public function getViaTableAttributeValue($attributeName, $relatedPk, $isNewRecord = true, $oldValue = null)
     {
         $viaTableAttributes = $this->getViaTableAttributesValue();
 
         if (!array_key_exists($attributeName, $viaTableAttributes)) {
-            return null;
+            throw new InvalidParamException('Use a undefined attribute: ' . $attributeName . '.');
         }
 
         if (is_callable($viaTableAttributes[$attributeName])) {
@@ -65,7 +66,8 @@ abstract class BaseManyToManyUpdater extends BaseUpdater implements ManyToManyUp
                 $viaTableAttributes[$attributeName],
                 $this,
                 $relatedPk,
-                $isNewRecord
+                $isNewRecord,
+                $oldValue
             );
         }
 

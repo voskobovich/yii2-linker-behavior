@@ -69,7 +69,10 @@ class ManyToManyUpdater extends BaseManyToManyUpdater
 
                     // Calculate additional viaTable values
                     foreach ($viaTableColumnNames as $viaTableColumnName) {
-                        $row[] = $this->getViaTableAttributeValue($viaTableColumnName, $relatedPkValue);
+                        $row[] = $this->getViaTableAttributeValue(
+                            $viaTableColumnName,
+                            $relatedPkValue
+                        );
                     }
 
                     array_push($junctionRows, $row);

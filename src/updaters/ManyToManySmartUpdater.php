@@ -88,7 +88,10 @@ class ManyToManySmartUpdater extends BaseManyToManyUpdater
 
                         // Calculate additional viaTable values
                         foreach ($viaTableColumnNames as $viaTableColumnName) {
-                            $row[] = $this->getViaTableAttributeValue($viaTableColumnName, $addedKey);
+                            $row[] = $this->getViaTableAttributeValue(
+                                $viaTableColumnName,
+                                $addedKey
+                            );
                         }
 
                         array_push($junctionRows, $row);
@@ -102,17 +105,19 @@ class ManyToManySmartUpdater extends BaseManyToManyUpdater
                 // Processing untouched relations
                 if (!empty($untouchedKeys) && !empty($viaTableColumnNames)) {
                     foreach ($untouchedKeys as $untouchedKey) {
+                        $currentRow = (array)$currentRows[$untouchedKey];
+
                         // Calculate additional viaTable values
                         $row = [];
                         foreach ($viaTableColumnNames as $viaTableColumnName) {
                             $row[$viaTableColumnName] = $this->getViaTableAttributeValue(
                                 $viaTableColumnName,
                                 $untouchedKey,
-                                false
+                                false,
+                                $currentRow[$viaTableColumnName]
                             );
                         }
 
-                        $currentRow = (array)$currentRows[$untouchedKey];
                         unset($currentRow[$junctionColumnName]);
                         unset($currentRow[$relatedColumnName]);
 

@@ -25,9 +25,10 @@ interface ManyToManyUpdaterInterface extends UpdaterInterface
      * @param string $attributeName
      * @param integer $relatedPk
      * @param bool $isNewRecord
+     * @param $oldValue
      * @return mixed
      */
-    public function getViaTableAttributeValue($attributeName, $relatedPk, $isNewRecord = true);
+    public function getViaTableAttributeValue($attributeName, $relatedPk, $isNewRecord, $oldValue);
 
     /**
      * Set condition used to processed old records from viaTable.
