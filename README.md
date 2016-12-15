@@ -178,7 +178,7 @@ For seting additional values in junction table (apart columns required for relat
             'created_at' => function() {
                 return new \yii\db\Expression('NOW()');
             },
-            'is_main' => function($model, $relationName, $attributeName, $relatedPk) {
+            'is_main' => function($updater, $relatedPk, $isNewRecord) {
                 return array_search($relatedPk, $model->author_ids) === 0;
             },
         ],
