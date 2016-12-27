@@ -2,6 +2,8 @@
 
 namespace voskobovich\linker\interfaces;
 
+use voskobovich\linker\AssociativeRowCondition;
+
 /**
  * Interface ManyToManyUpdaterInterface
  * @package voskobovich\linker\interfaces
@@ -24,11 +26,10 @@ interface ManyToManyUpdaterInterface extends UpdaterInterface
      * Get additional value of attribute in viaTable
      * @param string $attributeName
      * @param integer $relatedPk
-     * @param bool $isNewRecord
-     * @param $oldValue
+     * @param AssociativeRowCondition $rowCondition
      * @return mixed
      */
-    public function getViaTableAttributeValue($attributeName, $relatedPk, $isNewRecord, $oldValue);
+    public function getViaTableAttributeValue($attributeName, $relatedPk, AssociativeRowCondition $rowCondition);
 
     /**
      * Set condition used to processed old records from viaTable.

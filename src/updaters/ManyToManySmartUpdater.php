@@ -2,6 +2,8 @@
 
 namespace voskobovich\linker\updaters;
 
+use voskobovich\linker\AssociativeRowCondition;
+use Yii;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
 use yii\helpers\ArrayHelper;
@@ -90,7 +92,8 @@ class ManyToManySmartUpdater extends BaseManyToManyUpdater
                         foreach ($viaTableColumnNames as $viaTableColumnName) {
                             $row[] = $this->getViaTableAttributeValue(
                                 $viaTableColumnName,
-                                $addedKey
+                                $addedKey,
+                                new $this->rowConditionClass
                             );
                         }
 
@@ -110,11 +113,19 @@ class ManyToManySmartUpdater extends BaseManyToManyUpdater
                         // Calculate additional viaTable values
                         $row = [];
                         foreach ($viaTableColumnNames as $viaTableColumnName) {
+                            /** @var AssociativeRowCondition $rowCondition */
+                            $rowCondition = Yii::createObject(
+                                $this->rowConditionClass,
+                                [
+                                    'isNewRecord' => false,
+                                    'oldValue' => $currentRow[$viaTableColumnName]
+                                ]
+                            );
+
                             $row[$viaTableColumnName] = $this->getViaTableAttributeValue(
                                 $viaTableColumnName,
                                 $untouchedKey,
-                                false,
-                                $currentRow[$viaTableColumnName]
+                                $rowCondition
                             );
                         }
 

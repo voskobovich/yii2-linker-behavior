@@ -166,7 +166,7 @@ Specifying getters and setters for the primary attribute (`author_ids` in the ab
 
 ### Custom junction table values ###
 
-For seting additional values in junction table (apart columns required for relation), you can use `viaTableAttributesValue`:
+For setting additional values in junction table (apart columns required for relation), you can use `viaTableAttributesValue`:
 
 ```php
 ...
@@ -178,8 +178,24 @@ For seting additional values in junction table (apart columns required for relat
             'created_at' => function() {
                 return new \yii\db\Expression('NOW()');
             },
-            'is_main' => function($updater, $relatedPk, $isNewRecord, $oldValue) {
-                return array_search($relatedPk, $model->author_ids) === 0;
+            'is_main' => function($updater, $relatedPk, $rowCondition) {
+                /**
+                 * $updater this is a object of current updater that implement UpdaterInterface.
+                 * $relatedPk this is a Primary Key of related object.
+                 * $rowCondition this is a object of current row state, that implement AssociativeRowCondition.
+                 */
+                 
+                /**
+                 * How i can get the Primary Model?
+                 */
+                $primaryModel = $updater->getBehavior()->owner;
+                
+                /**
+                 * How i can get the Primary Key of Primery Model?
+                 */
+                $primaryModelPkValue = $primaryModel->getPrimaryKey();
+                 
+                return array_search($relatedPk, $primaryModel->author_ids) === 0;
             },
         ],
     ]

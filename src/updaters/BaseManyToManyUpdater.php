@@ -2,6 +2,7 @@
 
 namespace voskobovich\linker\updaters;
 
+use voskobovich\linker\AssociativeRowCondition;
 use voskobovich\linker\interfaces\ManyToManyUpdaterInterface;
 use yii\base\InvalidParamException;
 
@@ -11,6 +12,12 @@ use yii\base\InvalidParamException;
  */
 abstract class BaseManyToManyUpdater extends BaseUpdater implements ManyToManyUpdaterInterface
 {
+    /**
+     * This is a object of current row state, that implement AssociativeRowCondition.
+     * @var string
+     */
+    public $rowConditionClass = 'voskobovich\linker\AssociativeRowCondition';
+
     /**
      * List of attributes and values by viaTable
      * @var array
@@ -49,11 +56,10 @@ abstract class BaseManyToManyUpdater extends BaseUpdater implements ManyToManyUp
      * Get additional value of attribute in viaTable
      * @param string $attributeName
      * @param integer $relatedPk
-     * @param bool $isNewRecord
-     * @param mixed|null $oldValue
+     * @param AssociativeRowCondition $rowCondition
      * @return mixed
      */
-    public function getViaTableAttributeValue($attributeName, $relatedPk, $isNewRecord = true, $oldValue = null)
+    public function getViaTableAttributeValue($attributeName, $relatedPk, AssociativeRowCondition $rowCondition)
     {
         $viaTableAttributes = $this->getViaTableAttributesValue();
 
@@ -66,8 +72,7 @@ abstract class BaseManyToManyUpdater extends BaseUpdater implements ManyToManyUp
                 $viaTableAttributes[$attributeName],
                 $this,
                 $relatedPk,
-                $isNewRecord,
-                $oldValue
+                $rowCondition
             );
         }
 
