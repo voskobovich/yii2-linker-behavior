@@ -2,6 +2,8 @@
 
 namespace voskobovich\linker\updaters;
 
+use voskobovich\linker\AssociativeRowCondition;
+use Yii;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
 use yii\helpers\ArrayHelper;
@@ -88,7 +90,11 @@ class ManyToManySmartUpdater extends BaseManyToManyUpdater
 
                         // Calculate additional viaTable values
                         foreach ($viaTableColumnNames as $viaTableColumnName) {
-                            $row[] = $this->getViaTableAttributeValue($viaTableColumnName, $addedKey);
+                            $row[] = $this->getViaTableAttributeValue(
+                                $viaTableColumnName,
+                                $addedKey,
+                                new $this->rowConditionClass
+                            );
                         }
 
                         array_push($junctionRows, $row);
@@ -102,17 +108,27 @@ class ManyToManySmartUpdater extends BaseManyToManyUpdater
                 // Processing untouched relations
                 if (!empty($untouchedKeys) && !empty($viaTableColumnNames)) {
                     foreach ($untouchedKeys as $untouchedKey) {
+                        $currentRow = (array)$currentRows[$untouchedKey];
+
                         // Calculate additional viaTable values
                         $row = [];
                         foreach ($viaTableColumnNames as $viaTableColumnName) {
+                            /** @var AssociativeRowCondition $rowCondition */
+                            $rowCondition = Yii::createObject(
+                                $this->rowConditionClass,
+                                [
+                                    'isNewRecord' => false,
+                                    'oldValue' => $currentRow[$viaTableColumnName]
+                                ]
+                            );
+
                             $row[$viaTableColumnName] = $this->getViaTableAttributeValue(
                                 $viaTableColumnName,
                                 $untouchedKey,
-                                false
+                                $rowCondition
                             );
                         }
 
-                        $currentRow = (array)$currentRows[$untouchedKey];
                         unset($currentRow[$junctionColumnName]);
                         unset($currentRow[$relatedColumnName]);
 
