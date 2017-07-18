@@ -16,7 +16,7 @@ abstract class BaseManyToManyUpdater extends BaseUpdater implements ManyToManyUp
      *
      * @var string
      */
-    public $rowConditionClass = AssociativeRowCondition::class;
+    public $rowConditionClass = 'voskobovich\linker\AssociativeRowCondition';
 
     /**
      * List of attributes and values by viaTable.
