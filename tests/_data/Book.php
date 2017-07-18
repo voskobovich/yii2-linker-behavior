@@ -8,17 +8,16 @@ use yii\db\ActiveRecord;
 /**
  * This is the model class for table "book".
  *
- * @property integer $id
+ * @property int $id
  * @property string $name
- * @property integer $year
- *
- * @property integer[] $review_ids
- * @property integer[] $author_ids
+ * @property int $year
+ * @property int[] $review_ids
+ * @property int[] $author_ids
  */
 class Book extends ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -26,7 +25,7 @@ class Book extends ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -34,12 +33,12 @@ class Book extends ActiveRecord
             [['author_ids', 'review_ids'], 'safe'],
             [['name', 'year'], 'required'],
             [['year'], 'integer'],
-            [['name'], 'string', 'max' => 150]
+            [['name'], 'string', 'max' => 150],
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -68,7 +67,7 @@ class Book extends ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function behaviors()
     {
@@ -78,8 +77,8 @@ class Book extends ActiveRecord
                 'relations' => [
                     'author_ids' => 'authors',
                     'review_ids' => 'reviews',
-                ]
-            ]
+                ],
+            ],
         ];
     }
 }

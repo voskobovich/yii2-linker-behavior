@@ -6,13 +6,12 @@ use voskobovich\linker\LinkerBehavior;
 use yii\helpers\Json;
 
 /**
- * Class BookBadFields
- * @package data
+ * Class BookBadFields.
  */
 class BookBadFields extends Book
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function behaviors()
     {

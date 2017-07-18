@@ -9,14 +9,15 @@ use yii\db\Exception;
 use yii\helpers\ArrayHelper;
 
 /**
- * Class ManyToManySmartUpdater
- * @package voskobovich\linker\updaters
+ * Class ManyToManySmartUpdater.
  */
 class ManyToManySmartUpdater extends BaseManyToManyUpdater
 {
     /**
      * @throws Exception
      * @throws \yii\db\Exception
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\base\InvalidParamException
      */
     public function save()
     {
@@ -66,7 +67,7 @@ class ManyToManySmartUpdater extends BaseManyToManyUpdater
                 $currentRows
             );
 
-            if (!empty($bindingKeys)) {
+            if (false === empty($bindingKeys)) {
                 // Find removed relations
                 $removedKeys = array_diff($currentKeys, $bindingKeys);
                 // Find new relations
@@ -83,7 +84,7 @@ class ManyToManySmartUpdater extends BaseManyToManyUpdater
                 }
 
                 // Write new relations
-                if (!empty($addedKeys)) {
+                if (false === empty($addedKeys)) {
                     $junctionRows = [];
                     foreach ($addedKeys as $addedKey) {
                         $row = [$primaryModelPkValue, $addedKey];
@@ -93,11 +94,11 @@ class ManyToManySmartUpdater extends BaseManyToManyUpdater
                             $row[] = $this->getViaTableAttributeValue(
                                 $viaTableColumnName,
                                 $addedKey,
-                                new $this->rowConditionClass
+                                new $this->rowConditionClass()
                             );
                         }
 
-                        array_push($junctionRows, $row);
+                        $junctionRows[] = $row;
                     }
 
                     $dbConnection->createCommand()
@@ -106,7 +107,7 @@ class ManyToManySmartUpdater extends BaseManyToManyUpdater
                 }
 
                 // Processing untouched relations
-                if (!empty($untouchedKeys) && !empty($viaTableColumnNames)) {
+                if (false === empty($untouchedKeys) && false === empty($viaTableColumnNames)) {
                     foreach ($untouchedKeys as $untouchedKey) {
                         $currentRow = (array)$currentRows[$untouchedKey];
 
@@ -118,7 +119,7 @@ class ManyToManySmartUpdater extends BaseManyToManyUpdater
                                 $this->rowConditionClass,
                                 [
                                     'isNewRecord' => false,
-                                    'oldValue' => $currentRow[$viaTableColumnName]
+                                    'oldValue' => $currentRow[$viaTableColumnName],
                                 ]
                             );
 
@@ -129,10 +130,9 @@ class ManyToManySmartUpdater extends BaseManyToManyUpdater
                             );
                         }
 
-                        unset($currentRow[$junctionColumnName]);
-                        unset($currentRow[$relatedColumnName]);
+                        unset($currentRow[$junctionColumnName], $currentRow[$relatedColumnName]);
 
-                        if (!array_diff_assoc($currentRow, $row)) {
+                        if (false === array_diff_assoc($currentRow, $row)) {
                             continue;
                         }
 
@@ -142,7 +142,7 @@ class ManyToManySmartUpdater extends BaseManyToManyUpdater
                                 $row,
                                 [
                                     $junctionColumnName => $primaryModelPkValue,
-                                    $relatedColumnName => $untouchedKey
+                                    $relatedColumnName => $untouchedKey,
                                 ]
                             )
                             ->execute();
@@ -152,7 +152,7 @@ class ManyToManySmartUpdater extends BaseManyToManyUpdater
                 $removedKeys = $currentKeys;
             }
 
-            if (!empty($removedKeys)) {
+            if (false === empty($removedKeys)) {
                 $dbConnection->createCommand()
                     ->delete(
                         $viaTableName,

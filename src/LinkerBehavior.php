@@ -14,10 +14,7 @@ use yii\db\ActiveRecord;
 use yii\base\ErrorException;
 
 /**
- * Class LinkerBehavior
- * @package voskobovich\linker
- *
- * See README.md for examples
+ * Class LinkerBehavior.
  */
 class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
 {
@@ -41,6 +38,7 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
      *     ]
      * ]
      * ```
+     *
      * @var array
      */
     public $relations = [];
@@ -82,23 +80,27 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
     private $dynamicFieldsOfModel = [];
 
     /**
-     * Build updater instance
+     * Build updater instance.
+     *
      * @param $relationConfig
      * @param $defaultUpdaterClass
+     *
+     * @throws \yii\base\InvalidConfigException
+     *
      * @return object
      */
     private function buildUpdater($relationConfig, $defaultUpdaterClass)
     {
-        if (!is_array($relationConfig)) {
+        if (false === is_array($relationConfig)) {
             $relationConfig = [$relationConfig];
         }
 
         if (empty($relationConfig['updater']['class'])) {
-            if (!empty($relationConfig['updater'])) {
+            if (false === empty($relationConfig['updater'])) {
                 $relationConfig['updater']['class'] = $defaultUpdaterClass;
             } else {
                 $relationConfig['updater'] = [
-                    'class' => $defaultUpdaterClass
+                    'class' => $defaultUpdaterClass,
                 ];
             }
         }
@@ -107,7 +109,8 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
     }
 
     /**
-     * Events list
+     * Events list.
+     *
      * @return array
      */
     public function events()
@@ -119,7 +122,9 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
     }
 
     /**
-     * Invokes init of parent class and assigns proper values to internal fields variable
+     * Invokes init of parent class and assigns proper values to internal fields variable.
+     *
+     * @throws \yii\base\ErrorException
      */
     public function init()
     {
@@ -161,8 +166,11 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
     }
 
     /**
-     * Save all dirty (changed) relation values ($this->dirtyValueOfAttributes) to the database
+     * Save all dirty (changed) relation values ($this->dirtyValueOfAttributes) to the database.
+     *
      * @throws ErrorException
+     * @throws \yii\base\InvalidParamException
+     * @throws \yii\base\InvalidConfigException
      */
     public function saveRelations()
     {
@@ -178,25 +186,25 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
             $relationName = $this->getRelationName($dynamicAttributeName);
             $relation = $primaryModel->getRelation($relationName);
 
-            if (!$this->hasDirtyValueOfAttribute($dynamicAttributeName)) {
+            if (false === $this->hasDirtyValueOfAttribute($dynamicAttributeName)) {
                 continue;
             }
 
-            if (!empty($relation->via) && $relation->multiple) {
+            if (false === empty($relation->via) && $relation->multiple) {
                 // Many-to-many
 
                 $updater = $this->buildUpdater($dynamicAttributeParams, ManyToManyUpdater::className());
-                if (!$updater instanceof ManyToManyUpdaterInterface) {
+                if (false === $updater instanceof ManyToManyUpdaterInterface) {
                     throw new InvalidConfigException(
                         'Updater class must implement ' .
                         'the interface "voskobovich\linker\interfaces\ManyToManyUpdaterInterface"'
                     );
                 }
-            } elseif (!empty($relation->link) && $relation->multiple) {
+            } elseif (false === empty($relation->link) && $relation->multiple) {
                 // One-to-many on the many side
 
                 $updater = $this->buildUpdater($dynamicAttributeParams, OneToManyUpdater::className());
-                if (!$updater instanceof OneToManyUpdaterInterface) {
+                if (false === $updater instanceof OneToManyUpdaterInterface) {
                     throw new InvalidConfigException(
                         'Updater class must implement ' .
                         'the interface "voskobovich\linker\interfaces\OneToManyUpdaterInterface"'
@@ -214,9 +222,11 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
     }
 
     /**
-     * Check if an attribute is dirty and must be saved (its new value exists)
+     * Check if an attribute is dirty and must be saved (its new value exists).
+     *
      * @param string $attributeName
-     * @return null
+     *
+     * @return bool
      */
     public function hasDirtyValueOfAttribute($attributeName)
     {
@@ -224,9 +234,11 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
     }
 
     /**
-     * Get value of a dirty attribute by name
+     * Get value of a dirty attribute by name.
+     *
      * @param string $attributeName
-     * @return null
+     *
+     * @return mixed
      */
     public function getDirtyValueOfAttribute($attributeName)
     {
@@ -234,14 +246,17 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
     }
 
     /**
-     * Get parameters of a field
+     * Get parameters of a field.
+     *
      * @param string $fieldName
-     * @return mixed
+     *
      * @throws ErrorException
+     *
+     * @return mixed
      */
     public function getFieldParams($fieldName)
     {
-        if (!array_key_exists($fieldName, $this->dynamicFieldsOfModel)) {
+        if (false === array_key_exists($fieldName, $this->dynamicFieldsOfModel)) {
             throw new ErrorException('Parameter "' . $fieldName . '" does not exist');
         }
 
@@ -249,14 +264,17 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
     }
 
     /**
-     * Get parameters of a relation
+     * Get parameters of a relation.
+     *
      * @param string $attributeName
-     * @return mixed
+     *
      * @throws ErrorException
+     *
+     * @return mixed
      */
     public function getRelationParams($attributeName)
     {
-        if (!array_key_exists($attributeName, $this->relations)) {
+        if (false === array_key_exists($attributeName, $this->relations)) {
             throw new ErrorException('Parameter "' . $attributeName . '" does not exist.');
         }
 
@@ -264,9 +282,13 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
     }
 
     /**
-     * Get name of a relation
+     * Get name of a relation.
+     *
      * @param string $attributeName
-     * @return null
+     *
+     * @throws \yii\base\ErrorException
+     *
+     * @return mixed|null
      */
     public function getRelationName($attributeName)
     {
@@ -276,7 +298,7 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
             return $params;
         }
 
-        if (is_array($params) && !empty($params[0])) {
+        if (is_array($params) && false === empty($params[0])) {
             return $params[0];
         }
 
@@ -284,7 +306,7 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function canGetProperty($name, $checkVars = true)
     {
@@ -294,7 +316,7 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function canSetProperty($name, $checkVars = true)
     {
@@ -304,7 +326,11 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
+     * @throws \yii\base\ErrorException
+     * @throws \yii\base\InvalidParamException
+     * @throws \yii\base\InvalidConfigException
      */
     public function __get($name)
     {
@@ -332,15 +358,18 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
+     * @throws \yii\base\ErrorException
      */
     public function __set($name, $value)
     {
         $fieldParams = $this->getFieldParams($name);
         $attributeName = $fieldParams['attribute'];
 
-        if (!empty($fieldParams['set'])) {
+        if (false === empty($fieldParams['set'])) {
             $this->dirtyValueOfAttributes[$attributeName] = call_user_func($fieldParams['set'], $value);
+
             return;
         }
 

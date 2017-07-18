@@ -6,13 +6,12 @@ use voskobovich\linker\LinkerBehavior;
 use yii\helpers\Json;
 
 /**
- * Class BookJson
- * @package data
+ * Class BookJson.
  */
 class BookJson extends Book
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function behaviors()
     {
@@ -37,9 +36,9 @@ class BookJson extends Book
                         'set' => function ($value) {
                             return Json::decode($value);
                         },
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ];
     }
 }

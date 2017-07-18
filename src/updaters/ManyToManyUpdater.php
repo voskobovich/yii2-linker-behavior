@@ -7,14 +7,14 @@ use yii\db\Exception;
 use yii\helpers\ArrayHelper;
 
 /**
- * Class ManyToManyUpdater
- * @package voskobovich\linker\updaters
+ * Class ManyToManyUpdater.
  */
 class ManyToManyUpdater extends BaseManyToManyUpdater
 {
     /**
      * @throws Exception
      * @throws \yii\db\Exception
+     * @throws \yii\base\InvalidParamException
      */
     public function save()
     {
@@ -58,7 +58,7 @@ class ManyToManyUpdater extends BaseManyToManyUpdater
                 ->execute();
 
             // Write new relations
-            if (!empty($bindingKeys)) {
+            if (false === empty($bindingKeys)) {
                 $junctionRows = [];
 
                 $viaTableAttributes = $this->getViaTableAttributesValue();
@@ -72,11 +72,11 @@ class ManyToManyUpdater extends BaseManyToManyUpdater
                         $row[] = $this->getViaTableAttributeValue(
                             $viaTableColumnName,
                             $relatedPkValue,
-                            new $this->rowConditionClass
+                            new $this->rowConditionClass()
                         );
                     }
 
-                    array_push($junctionRows, $row);
+                    $junctionRows[] = $row;
                 }
 
                 $junctionTableColumnNames = [$junctionColumnName, $relatedColumnName];

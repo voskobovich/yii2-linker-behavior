@@ -9,31 +9,34 @@ use yii\base\Object;
 use yii\db\ActiveQuery;
 
 /**
- * Class BaseUpdater
- * @package voskobovich\linker\updaters
+ * Class BaseUpdater.
  */
 abstract class BaseUpdater extends Object implements UpdaterInterface
 {
     /**
-     * Behavior object
+     * Behavior object.
+     *
      * @var LinkerBehaviorInterface|Behavior
      */
     private $behavior;
 
     /**
-     * Relation object
+     * Relation object.
+     *
      * @var ActiveQuery
      */
     private $relation;
 
     /**
-     * Current attribute name
+     * Current attribute name.
+     *
      * @var string
      */
     private $attributeName;
 
     /**
-     * Set behavior object
+     * Set behavior object.
+     *
      * @param LinkerBehaviorInterface $behavior
      */
     public function setBehavior(LinkerBehaviorInterface $behavior)
@@ -42,7 +45,8 @@ abstract class BaseUpdater extends Object implements UpdaterInterface
     }
 
     /**
-     * Set behavior object
+     * Set behavior object.
+     *
      * @return LinkerBehaviorInterface|Behavior
      */
     public function getBehavior()
@@ -51,7 +55,8 @@ abstract class BaseUpdater extends Object implements UpdaterInterface
     }
 
     /**
-     * Set relation object
+     * Set relation object.
+     *
      * @param ActiveQuery $value
      */
     public function setRelation(ActiveQuery $value)
@@ -60,7 +65,8 @@ abstract class BaseUpdater extends Object implements UpdaterInterface
     }
 
     /**
-     * Get relation object
+     * Get relation object.
+     *
      * @return ActiveQuery
      */
     public function getRelation()
@@ -69,7 +75,8 @@ abstract class BaseUpdater extends Object implements UpdaterInterface
     }
 
     /**
-     * Set attribute name
+     * Set attribute name.
+     *
      * @param string $value
      */
     public function setAttributeName($value)
@@ -78,7 +85,8 @@ abstract class BaseUpdater extends Object implements UpdaterInterface
     }
 
     /**
-     * Get attribute name
+     * Get attribute name.
+     *
      * @return string
      */
     public function getAttributeName()

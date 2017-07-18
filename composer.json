@@ -1,47 +1,49 @@
 {
-    "name": "voskobovich/yii2-linker-behavior",
-    "description": "This behavior makes it easy to maintain many-to-many and one-to-many relations in your ActiveRecord models.",
-    "keywords": [
-        "behavior",
-        "ar",
-        "active record",
-        "yii2",
-        "many-to-many",
-        "one-to-many",
-        "relations"
-    ],
-    "homepage": "https://github.com/voskobovich/yii2-linker-behavior",
-    "type": "yii2-behavior",
-    "license": "MIT",
-    "support": {
-        "issues": "https://github.com/voskobovich/yii2-linker-behavior/issues",
-        "source": "https://github.com/voskobovich/yii2-linker-behavior"
+  "name": "voskobovich/yii2-linker-behavior",
+  "description": "This behavior makes it easy to maintain many-to-many and one-to-many relations in your ActiveRecord models.",
+  "keywords": [
+    "behavior",
+    "ar",
+    "active record",
+    "yii2",
+    "many-to-many",
+    "one-to-many",
+    "relations"
+  ],
+  "homepage": "https://github.com/voskobovich/yii2-linker-behavior",
+  "type": "yii2-behavior",
+  "license": "MIT",
+  "support": {
+    "issues": "https://github.com/voskobovich/yii2-linker-behavior/issues",
+    "source": "https://github.com/voskobovich/yii2-linker-behavior"
+  },
+  "authors": [
+    {
+      "name": "Vitaly Voskobovich",
+      "email": "vitaly@voskobovich.com",
+      "homepage": "http://voskobovich.com"
     },
-    "authors": [
-        {
-            "name": "Vitaly Voskobovich",
-            "email": "vitaly@voskobovich.com",
-            "homepage": "http://voskobovich.com"
-        },
-        {
-            "name": "Konstantin Sirotkin",
-            "email": "beowulfenator@gmail.com",
-            "homepage": "http://beowulfenator.github.io"
-        }
-    ],
-    "require": {
-        "php": ">=5.4.0",
-        "yiisoft/yii2": "^2"
-    },
-    "autoload": {
-        "psr-4": {
-            "voskobovich\\linker\\": "src",
-            "voskobovich\\linker\\interfaces\\": "src/interfaces",
-            "voskobovich\\linker\\updaters\\": "src/updaters"
-        }
-    },
-    "require-dev": {
-        "codeception/codeception": "*",
-        "yiisoft/yii2-codeception": "^2"
+    {
+      "name": "Konstantin Sirotkin",
+      "email": "beowulfenator@gmail.com",
+      "homepage": "http://beowulfenator.github.io"
     }
+  ],
+  "require": {
+    "php": ">=5.4.0",
+    "yiisoft/yii2": "^2"
+  },
+  "autoload": {
+    "psr-4": {
+      "voskobovich\\linker\\": "src",
+      "voskobovich\\linker\\interfaces\\": "src/interfaces",
+      "voskobovich\\linker\\updaters\\": "src/updaters"
+    }
+  },
+  "require-dev": {
+    "codeception/codeception": "*",
+    "yiisoft/yii2-codeception": "~2.0.0",
+    "yiisoft/yii2-coding-standards": "~2.0.2",
+    "friendsofphp/php-cs-fixer": "^2"
+  }
 }

@@ -6,8 +6,7 @@ use voskobovich\linker\LinkerBehavior;
 use yii\helpers\Json;
 
 /**
- * Class BookJsonFields
- * @package data
+ * Class BookJsonFields.
  *
  * @property string $review_ids_json
  * @property string $review_ids_implode
@@ -17,7 +16,7 @@ use yii\helpers\Json;
 class BookJsonFields extends Book
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function behaviors()
     {

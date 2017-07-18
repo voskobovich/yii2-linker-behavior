@@ -361,3 +361,18 @@ or add
 ```
 
 to the require section of your `composer.json` file.
+
+CODE ECOLOGY
+--
+
+To check the code:
+
+```bash
+./vendor/bin/phpcs -s --encoding=utf-8 --extensions=php .
+```
+
+To auto fix the code format:
+
+```bash
+./vendor/bin/php-cs-fixer fix
+```

@@ -5,24 +5,25 @@ namespace voskobovich\linker\updaters;
 use voskobovich\linker\interfaces\OneToManyUpdaterInterface;
 
 /**
- * Class BaseOneToManyUpdater
- * @package voskobovich\linker\updaters
+ * Class BaseOneToManyUpdater.
  */
 abstract class BaseOneToManyUpdater extends BaseUpdater implements OneToManyUpdaterInterface
 {
     /**
      * @var mixed
      */
-    private $fallbackValue = null;
+    private $fallbackValue;
 
     /**
-     * Set default value for an attribute
+     * Set default value for an attribute.
+     *
      * @param string $value
      */
     public function setFallbackValue($value)
     {
         if (is_callable($value)) {
-            $this->fallbackValue = call_user_func($value, $this);
+            $this->fallbackValue = $value($this);
+
             return;
         }
 
@@ -30,7 +31,8 @@ abstract class BaseOneToManyUpdater extends BaseUpdater implements OneToManyUpda
     }
 
     /**
-     * Get default value for an attribute (used for 1-N relations)
+     * Get default value for an attribute (used for 1-N relations).
+     *
      * @return mixed
      */
     public function getFallbackValue()
@@ -39,7 +41,7 @@ abstract class BaseOneToManyUpdater extends BaseUpdater implements OneToManyUpda
     }
 
     /**
-     * Save relation
+     * Save relation.
      */
     abstract public function save();
 }

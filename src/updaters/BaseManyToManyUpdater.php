@@ -7,36 +7,41 @@ use voskobovich\linker\interfaces\ManyToManyUpdaterInterface;
 use yii\base\InvalidParamException;
 
 /**
- * Class BaseManyToManyUpdater
- * @package voskobovich\linker\updaters
+ * Class BaseManyToManyUpdater.
  */
 abstract class BaseManyToManyUpdater extends BaseUpdater implements ManyToManyUpdaterInterface
 {
     /**
      * This is a object of current row state, that implement AssociativeRowCondition.
+     *
      * @var string
      */
-    public $rowConditionClass = 'voskobovich\linker\AssociativeRowCondition';
+    public $rowConditionClass = AssociativeRowCondition::class;
 
     /**
-     * List of attributes and values by viaTable
+     * List of attributes and values by viaTable.
+     *
      * @var array
      */
     private $viaTableAttributes = [];
 
     /**
      * Condition used to process old records from viaTable.
+     *
      * @var array
      */
     private $viaTableCondition = [];
 
     /**
-     * Set additional attributes of viaTable
+     * Set additional attributes of viaTable.
+     *
      * @param $value
+     *
+     * @throws \yii\base\InvalidParamException
      */
     public function setViaTableAttributesValue($value)
     {
-        if (!is_array($value)) {
+        if (false === is_array($value)) {
             throw new InvalidParamException('Value must be an array.');
         }
 
@@ -44,7 +49,8 @@ abstract class BaseManyToManyUpdater extends BaseUpdater implements ManyToManyUp
     }
 
     /**
-     * Get additional attributes of viaTable
+     * Get additional attributes of viaTable.
+     *
      * @return array
      */
     public function getViaTableAttributesValue()
@@ -53,17 +59,21 @@ abstract class BaseManyToManyUpdater extends BaseUpdater implements ManyToManyUp
     }
 
     /**
-     * Get additional value of attribute in viaTable
+     * Get additional value of attribute in viaTable.
+     *
      * @param string $attributeName
-     * @param integer $relatedPk
+     * @param int $relatedPk
      * @param AssociativeRowCondition $rowCondition
+     *
+     * @throws \yii\base\InvalidParamException
+     *
      * @return mixed
      */
     public function getViaTableAttributeValue($attributeName, $relatedPk, AssociativeRowCondition $rowCondition)
     {
         $viaTableAttributes = $this->getViaTableAttributesValue();
 
-        if (!array_key_exists($attributeName, $viaTableAttributes)) {
+        if (false === array_key_exists($attributeName, $viaTableAttributes)) {
             throw new InvalidParamException('Use a undefined attribute: ' . $attributeName . '.');
         }
 
@@ -81,6 +91,7 @@ abstract class BaseManyToManyUpdater extends BaseUpdater implements ManyToManyUp
 
     /**
      * Set condition used to process old records from viaTable.
+     *
      * @param $value
      */
     public function setViaTableCondition($value)
@@ -90,6 +101,7 @@ abstract class BaseManyToManyUpdater extends BaseUpdater implements ManyToManyUp
 
     /**
      * Get condition used to process old records from viaTable.
+     *
      * @return array
      */
     public function getViaTableCondition()
@@ -98,7 +110,7 @@ abstract class BaseManyToManyUpdater extends BaseUpdater implements ManyToManyUp
     }
 
     /**
-     * Save relations
+     * Save relations.
      */
     abstract public function save();
 }

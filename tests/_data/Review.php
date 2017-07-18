@@ -7,15 +7,15 @@ use yii\db\ActiveRecord;
 /**
  * This is the model class for table "review".
  *
- * @property integer $id
- * @property integer $book_id
+ * @property int $id
+ * @property int $book_id
  * @property string $comment
- * @property integer $rating
+ * @property int $rating
  */
 class Review extends ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -23,19 +23,19 @@ class Review extends ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
         return [
             [['book_id', 'rating'], 'integer'],
             [['comment', 'rating'], 'required'],
-            [['comment'], 'string', 'max' => 150]
+            [['comment'], 'string', 'max' => 150],
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {

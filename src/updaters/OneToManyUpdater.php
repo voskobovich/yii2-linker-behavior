@@ -7,13 +7,13 @@ use yii\db\ActiveRecord;
 use yii\db\Exception;
 
 /**
- * Class OneToManyUpdater
- * @package voskobovich\linker\updaters
+ * Class OneToManyUpdater.
  */
 class OneToManyUpdater extends BaseOneToManyUpdater
 {
     /**
      * @throws Exception
+     * @throws \yii\base\InvalidConfigException
      */
     public function save()
     {
@@ -29,11 +29,11 @@ class OneToManyUpdater extends BaseOneToManyUpdater
         // HasMany, primary model HAS MANY foreign models, must update foreign model table
         /** @var ActiveRecord $foreignModel */
         $foreignModel = Yii::createObject($relation->modelClass);
-        $manyTableName = $foreignModel->tableName();
+        $manyTableName = $foreignModel::tableName();
 
         list($manyTableFkColumnName) = array_keys($relation->link);
         $manyTableFkValue = $primaryModelPkValue;
-        list($manyTablePkColumnName) = ($foreignModel->primaryKey());
+        list($manyTablePkColumnName) = $foreignModel::primaryKey();
 
         $dbConnection = $foreignModel::getDb();
         $transaction = $dbConnection->beginTransaction();
@@ -49,7 +49,7 @@ class OneToManyUpdater extends BaseOneToManyUpdater
                 ->execute();
 
             // Write new relations
-            if (!empty($bindingKeys)) {
+            if (false === empty($bindingKeys)) {
                 $dbConnection->createCommand()
                     ->update(
                         $manyTableName,

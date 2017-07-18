@@ -14,22 +14,24 @@ use yii\Helpers\ArrayHelper;
 use yii\Helpers\Json;
 
 /**
- * Class BehaviorTest
- * @package unit
+ * Class BehaviorTest.
  */
 class BehaviorTest extends TestCase
 {
     /**
-     * Config Path
+     * Config Path.
+     *
      * @var string
      */
     public $appConfig = '@tests/unit/_config.php';
 
     /**
-     * Save model and Reload
+     * Save model and Reload.
+     *
      * @param \yii\db\ActiveRecord $modelClass
-     * @param integer $id the PK of model
+     * @param int $id the PK of model
      * @param $loadData
+     *
      * @return mixed
      */
     protected function saveAndReload($modelClass, $id, $loadData)
@@ -47,15 +49,15 @@ class BehaviorTest extends TestCase
     }
 
     /**
-     * Set empty data
+     * Set empty data.
      */
     public function testDoNothing()
     {
         $model = $this->saveAndReload(
-            new Book,
+            new Book(),
             3,
             [
-                'Book' => []
+                'Book' => [],
             ]
         );
 
@@ -64,17 +66,17 @@ class BehaviorTest extends TestCase
     }
 
     /**
-     * Test Save many-to-many record
+     * Test Save many-to-many record.
      */
     public function testSaveManyToMany()
     {
         $model = $this->saveAndReload(
-            new Book,
+            new Book(),
             5,
             [
                 'Book' => [
-                    'author_ids' => [7, 9, 8]
-                ]
+                    'author_ids' => [7, 9, 8],
+                ],
             ]
         );
 
@@ -89,17 +91,17 @@ class BehaviorTest extends TestCase
     }
 
     /**
-     * Reset many-to-many record
+     * Reset many-to-many record.
      */
     public function testResetManyToMany()
     {
         $model = $this->saveAndReload(
-            new Book,
+            new Book(),
             5,
             [
                 'Book' => [
-                    'author_ids' => []
-                ]
+                    'author_ids' => [],
+                ],
             ]
         );
 
@@ -108,17 +110,17 @@ class BehaviorTest extends TestCase
     }
 
     /**
-     * Save one-to-many record
+     * Save one-to-many record.
      */
     public function testSaveOneToMany()
     {
         $model = $this->saveAndReload(
-            new Book,
+            new Book(),
             3,
             [
                 'Book' => [
-                    'review_ids' => [2, 4]
-                ]
+                    'review_ids' => [2, 4],
+                ],
             ]
         );
 
@@ -132,17 +134,17 @@ class BehaviorTest extends TestCase
     }
 
     /**
-     * Reset one-to-many record
+     * Reset one-to-many record.
      */
     public function testResetOneToMany()
     {
         $model = $this->saveAndReload(
-            new Book,
+            new Book(),
             3,
             [
                 'Book' => [
-                    'review_ids' => []
-                ]
+                    'review_ids' => [],
+                ],
             ]
         );
 
@@ -151,17 +153,17 @@ class BehaviorTest extends TestCase
     }
 
     /**
-     * Save many-to-many record in JSON format
+     * Save many-to-many record in JSON format.
      */
     public function testSaveManyToManyJson()
     {
         $model = $this->saveAndReload(
-            new BookJson,
+            new BookJson(),
             5,
             [
                 'BookJson' => [
-                    'author_ids' => '[7, 9, 8]'
-                ]
+                    'author_ids' => '[7, 9, 8]',
+                ],
             ]
         );
 
@@ -176,17 +178,17 @@ class BehaviorTest extends TestCase
     }
 
     /**
-     * Reset many-to-many record in JSON format
+     * Reset many-to-many record in JSON format.
      */
     public function testResetManyToManyJson()
     {
         $model = $this->saveAndReload(
-            new BookJson,
+            new BookJson(),
             5,
             [
                 'BookJson' => [
-                    'author_ids' => '[]'
-                ]
+                    'author_ids' => '[]',
+                ],
             ]
         );
 
@@ -195,17 +197,17 @@ class BehaviorTest extends TestCase
     }
 
     /**
-     * Save one-to-many record in JSON format
+     * Save one-to-many record in JSON format.
      */
     public function testSaveOneToManyJson()
     {
         $model = $this->saveAndReload(
-            new BookJson,
+            new BookJson(),
             3,
             [
                 'BookJson' => [
-                    'review_ids' => '[2, 4]'
-                ]
+                    'review_ids' => '[2, 4]',
+                ],
             ]
         );
 
@@ -219,24 +221,23 @@ class BehaviorTest extends TestCase
     }
 
     /**
-     * Reset one-to-many record in JSON format
+     * Reset one-to-many record in JSON format.
      */
     public function testResetOneToManyJson()
     {
         $model = $this->saveAndReload(
-            new BookJson,
+            new BookJson(),
             3,
             [
                 'BookJson' => [
-                    'review_ids' => '[]'
-                ]
+                    'review_ids' => '[]',
+                ],
             ]
         );
 
         //must have zero reviews
         $this->assertEquals(0, count($model->reviews), 'Review count after save');
     }
-
 
     public function testResetWithDefaultNone()
     {
@@ -327,7 +328,7 @@ class BehaviorTest extends TestCase
         $authorIdsJson = Json::encode($authorIds);
 
         //assign and getters
-        $model = new BookJsonFields;
+        $model = new BookJsonFields();
         $model->review_ids = $reviewIds;
         $model->author_ids = $authorIds;
 
@@ -340,24 +341,24 @@ class BehaviorTest extends TestCase
         $this->assertEquals($model->review_ids_implode, $reviewIdsImplode, 'Implode getter');
 
         //test json setters
-        $model = new BookJsonFields;
+        $model = new BookJsonFields();
         $model->review_ids_json = $reviewIdsJson;
         $this->assertEquals($model->review_ids, $reviewIds, 'JSON setter');
         $model->author_ids_json = $authorIdsJson;
         $this->assertEquals($model->author_ids, $authorIds, 'JSON setter');
 
         //test implode setter for non-existence where appropriate
-        $model = new BookJsonFields;
+        $model = new BookJsonFields();
         $this->assertFalse(isset($model->author_ids_implode), 'Non-existence of setter where not declared');
 
         //test implode setter
-        $model = new BookJsonFields;
+        $model = new BookJsonFields();
         $model->review_ids_implode = $reviewIdsImplode;
         $this->assertEquals($model->review_ids, $reviewIds, 'Implode setter');
     }
 
     /**
-     * Test Bad Fields
+     * Test Bad Fields.
      */
     public function testBadFields()
     {
