@@ -115,13 +115,11 @@ class ManyToManySmartUpdater extends BaseManyToManyUpdater
                         $row = [];
                         foreach ($viaTableColumnNames as $viaTableColumnName) {
                             /** @var AssociativeRowCondition $rowCondition */
-                            $rowCondition = Yii::createObject(
-                                $this->rowConditionClass,
-                                [
-                                    'isNewRecord' => false,
-                                    'oldValue' => $currentRow[$viaTableColumnName],
-                                ]
-                            );
+                            $rowCondition = Yii::createObject([
+                                'class' => $this->rowConditionClass,
+                                'isNewRecord' => false,
+                                'oldValue' => $currentRow[$viaTableColumnName],
+                            ]);
 
                             $row[$viaTableColumnName] = $this->getViaTableAttributeValue(
                                 $viaTableColumnName,
