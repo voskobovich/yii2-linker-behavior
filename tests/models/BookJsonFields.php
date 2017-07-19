@@ -1,14 +1,19 @@
 <?php
 
-namespace data;
+namespace models;
 
 use voskobovich\linker\LinkerBehavior;
 use yii\helpers\Json;
 
 /**
- * Class BookBadFields.
+ * Class BookJsonFields.
+ *
+ * @property string $review_ids_json
+ * @property string $review_ids_implode
+ * @property string $author_ids_json
+ * @property string $author_ids_implode
  */
-class BookBadFields extends Book
+class BookJsonFields extends Book
 {
     /**
      * {@inheritdoc}
@@ -19,10 +24,10 @@ class BookBadFields extends Book
             'linkerBehavior' => [
                 'class' => LinkerBehavior::className(),
                 'relations' => [
-                    'author' => [
+                    'author_ids' => [
                         'authors',
                         'fields' => [
-                            'ids_json' => [
+                            'json' => [
                                 'get' => function ($value) {
                                     return Json::encode($value);
                                 },
@@ -32,7 +37,7 @@ class BookBadFields extends Book
                             ],
                         ],
                     ],
-                    'author_ids' => [
+                    'review_ids' => [
                         'reviews',
                         'fields' => [
                             'json' => [
@@ -41,6 +46,14 @@ class BookBadFields extends Book
                                 },
                                 'set' => function ($value) {
                                     return Json::decode($value);
+                                },
+                            ],
+                            'implode' => [
+                                'get' => function ($value) {
+                                    return implode(',', $value);
+                                },
+                                'set' => function ($value) {
+                                    return explode(',', $value);
                                 },
                             ],
                         ],

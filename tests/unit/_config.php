@@ -9,7 +9,7 @@ return [
     'components' => [
         'db' => [
             'class' => '\yii\db\Connection',
-            'dsn' => 'sqlite:' . \Yii::getAlias('@tests/_output/temp.db'),
+            'dsn' => 'sqlite:' . \Yii::getAlias('@tests/_output/db.sqlite3'),
             'username' => '',
             'password' => '',
         ],

@@ -1,6 +1,6 @@
 <?php
 
-namespace data;
+namespace models;
 
 use voskobovich\linker\LinkerBehavior;
 use yii\helpers\Json;

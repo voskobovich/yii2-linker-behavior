@@ -1,6 +1,6 @@
 <?php
 
-namespace data;
+namespace models;
 
 use voskobovich\linker\LinkerBehavior;
 use Yii;
@@ -25,6 +25,7 @@ class BookCustomDefaults extends Book
 
     /**
      * {@inheritdoc}
+     *
      * @throws \yii\db\Exception
      */
     public function behaviors()

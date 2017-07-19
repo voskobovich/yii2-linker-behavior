@@ -1,4 +1,10 @@
 BEGIN TRANSACTION;
+DROP TABLE "review";
+DROP TABLE "book_has_author";
+DROP TABLE "book";
+DROP TABLE "author";
+DROP TABLE "settings";
+
 CREATE TABLE "review" (
 	`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 	`book_id`	INTEGER,

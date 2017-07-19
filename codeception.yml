@@ -9,9 +9,12 @@ settings:
     colors: false
     memory_limit: 1024M
 modules:
-    config:
-        Db:
-            dsn: 'sqlite:tests/_output/temp.db'
-            user: ''
-            password: ''
-            dump: tests/dump.sql
+   enabled:
+      - Db:
+         dsn: 'sqlite:tests/_output/db.sqlite3'
+         user: ''
+         password: ''
+         dump: 'tests/_data/dump.sql'
+         populate: true # run populator before all tests
+         cleanup: true # run populator before each test
+         populator: 'cat $dump | sqlite3 tests/_output/db.sqlite3'

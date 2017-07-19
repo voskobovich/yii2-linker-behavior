@@ -5,6 +5,7 @@ namespace voskobovich\linker;
 use voskobovich\linker\interfaces\LinkerBehaviorInterface;
 use voskobovich\linker\interfaces\ManyToManyUpdaterInterface;
 use voskobovich\linker\interfaces\OneToManyUpdaterInterface;
+use voskobovich\linker\interfaces\UpdaterInterface;
 use voskobovich\linker\updaters\ManyToManyUpdater;
 use voskobovich\linker\updaters\OneToManyUpdater;
 use Yii;
@@ -87,7 +88,7 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
      *
      * @throws \yii\base\InvalidConfigException
      *
-     * @return object
+     * @return UpdaterInterface|object
      */
     private function buildUpdater($relationConfig, $defaultUpdaterClass)
     {
