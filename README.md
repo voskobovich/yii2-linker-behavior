@@ -78,7 +78,7 @@ public function behaviors()
             'class' => \voskobovich\linker\LinkerBehavior::className(),
             'relations' => [
                 'author_ids' => 'authors',
-				'review_ids' => 'reviews',
+		'review_ids' => 'reviews',
             ],
         ],
     ];
