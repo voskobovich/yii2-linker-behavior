@@ -2,12 +2,12 @@
 
 namespace voskobovich\linker;
 
-use yii\base\Object;
+use yii\base\BaseObject;
 
 /**
  * Class AssociativeRowCondition.
  */
-class AssociativeRowCondition extends Object
+class AssociativeRowCondition extends BaseObject
 {
     /**
      * The state of the associative row.
