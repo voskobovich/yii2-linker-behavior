@@ -34,6 +34,7 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
      * ```
      * 'relations' => [
      *     'reviews',
+     *     'cacheDuration' => 3600,
      *     'updater' => [
      *         'fallbackValue' => 17,
      *     ]
@@ -326,6 +327,8 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
             : parent::canSetProperty($name, $checkVars = true);
     }
 
+    private $foreignModel;
+    private $relation;
     /**
      * {@inheritdoc}
      *
@@ -338,17 +341,29 @@ class LinkerBehavior extends Behavior implements LinkerBehaviorInterface
         $fieldParams = $this->getFieldParams($name);
         $attributeName = $fieldParams['attribute'];
         $relationName = $this->getRelationName($attributeName);
+        $cacheDuration = intval($this->relations[$attributeName]['cacheDuration'] ?? 0);
 
         if ($this->hasDirtyValueOfAttribute($attributeName)) {
             $value = $this->getDirtyValueOfAttribute($attributeName);
         } else {
             /** @var ActiveRecord $owner */
             $owner = $this->owner;
+
             $relation = $owner->getRelation($relationName);
 
             /** @var ActiveRecord $foreignModel */
             $foreignModel = Yii::createObject($relation->modelClass);
-            $value = $relation->select($foreignModel->getPrimaryKey())->column();
+
+            $this->foreignModel = $foreignModel;
+            $this->relation = $relation;
+
+            if($cacheDuration) {
+                $value = $this->foreignModel::getDb()->cache(function ($db) {
+                    return $this->relation->select($this->foreignModel->getPrimaryKey())->column();
+                }, $cacheDuration);
+            } else {
+                $value = $relation->select($foreignModel->getPrimaryKey())->column();
+            }
         }
 
         if (empty($fieldParams['get'])) {
