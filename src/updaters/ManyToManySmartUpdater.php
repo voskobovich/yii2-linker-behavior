@@ -6,6 +6,7 @@ use voskobovich\linker\AssociativeRowCondition;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
+use yii\db\Query;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -50,14 +51,13 @@ class ManyToManySmartUpdater extends BaseManyToManyUpdater
         $transaction = $dbConnection->beginTransaction();
         try {
             // Load current rows
-            $currentRows = $primaryModel::find()
+            $currentRows = (new Query())
                 ->from($viaTableName)
                 ->where(ArrayHelper::merge(
                     [$junctionColumnName => $primaryModelPkValue],
                     $this->getViaTableCondition()
                 ))
                 ->indexBy($relatedColumnName)
-                ->asArray()
                 ->all();
 
             $currentKeys = array_map(
